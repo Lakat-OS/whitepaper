@@ -1,0 +1,5 @@
+## Logs and Auxiliary Outputs
+
+*.aux
+*.out
+*.log
