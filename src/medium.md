@@ -1,0 +1,1 @@
+Instead our scientific output still behaves like physical paper in the way it's treated and guarded. It is as though the printing press had been used to create exact replica of handwritten texts rather than using movable types.
