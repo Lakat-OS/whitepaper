@@ -12,9 +12,13 @@
     pdftitle={Overleaf Example},
     pdfpagemode=FullScreen,
     }
+    
+%\usepackage[left=1.00cm, right=1.00cm, top=0.75cm, bottom=1.25cm]{geometry} 
+\usepackage[left=2.50cm, right=2.50cm]{geometry}
+
 \newcommand{\remark}[1]{{\color{purple} (#1)}}
 
-\title{\sc{Lakas}\break \sc{A Distributed Publishing System}}
+\title{\sc{Lakat}\break \sc{A Publishing Architecture}}
 \author{Leonhard Horstmeyer}
 \date{\today}
 
@@ -28,23 +32,51 @@
 \end{abstract}
 \section{Introduction}
 
-With the technological possibilities that are at our disposal, such as the vast spectrum of data structures, of query and storage systems, of versioning and networking tools, we can create a publishing system that fits our needs. Instead our scientific output still behaves like physical paper in the way it's treated and guarded. It is as though the printing press had been used to create exact replica of handwritten texts rather than using movable types. One could rather start from requirements of a publishing system and reconcile them with the available technology. In this paper we provide one such system, whilst acknowledging and demarcating it from other proposals. We develop the specifications of a distributed publishing system that satisfies certain desirable requirements to a sufficient extent. We also discuss some possible shortcomings.
+With the technological possibilities at our disposal, such as the vast spectrum of data structures, of query and storage systems, of versioning and networking tools, one may create publishing systems that satisfy certain desirables, rather than following the so-called greedy approach of incrementally adjusting the existing one. Starting from a set of requirements for such a system we propose one architecture around the available technology that we call \textit{Lakat}, whilst acknowledging and demarcating it from other proposals. We discuss typical user journeys and attack vectors.
 
+We start with a set of eight core requirements, that we posit for a publishing system. It should be open, permissionless, pluralistic, process-oriented, curatable and sustainable. It should make conflict resolution manifest. Soft constraints should be prioritized over hard constraints. We will discuss these requirements in detail in the next section. At a high level we propose a distributed database with a local peer-reviewed concensus layer. It serves as a continuous integration and continuous development (CI/CD) solution for collaborative research. Conceptionally one may think of Lakat as a peer-to-peer version of wikipedia with a branch structure and peer review.
+
+Which problems does it solve?
+
+\section{Requirements}
+
+\begin{enumerate}
+ \item \textbf{Open} -- 
+ Content and code base\footnote{Here we refer to the code base of any client implementation.} should be accessible freely\footnote{Internet service providers are not free. So we refer here to additional charges.}.
+ \item \textbf{Permissionless} --
+ No one should be barred from contributing.
+ \item \textbf{Pluralistic} -- No monopoly on research opinion.\footnote{This is not not necessarily the same as ``No single source of truth''.}
+ \item \textbf{Conflict-resolvable} -- Making irreconcilabilities manifest.
+ \item \textbf{Reusabile} -- Allowing for the reuse of fragments of other research output.
+ \item \textbf{Curatable} -- Putting the curation on par with the content.
+ \item \textbf{Sustainable} -- 
+ Data and compute resources should be low.
+ \item \textbf{soft constraints}
+ 
+ 
+ 
+ Making a manifestly pluralist system not only prevents the dictatorship of one academic credo over another, but also allows for conflicting opinions to develope and hopefully resolve.
+ 
+\end{enumerate}
 
 \section{Elements of the Publishing System}
+
+At a high level we propose a permissionless, open and distributed database with a local peer-reviewed concensus layer. Data is submitted as deltas rather than in bulk. Its primary use case is publishing of research. It may be viewed as a layer-1 CI/CD solution for research. Conceptionally one may think of this as a peer-to-peer form of wikipedia with branch structure and peer review. \remark{As a base layer we are aiming to be as agnostic as possible towards the type of storage.} We present the core architecture and then dive into the individual choices in more depth. 
+
+Content is 
+
+
 
 The proposed publishing system is a distributed multibranch version control system. We first provide a high level overview of the elements and then discuss them in more detail, \remark{starting from the requirements that we aim to satisfy.}
 
 \subsection{Overview of the Elements}
 
 
-
 What is the structure of content? Rather than relying on a folder structure, as is the case in \href{https://git-scm.com/}{git}\cite{torwalds} or \href{https://en.wikipedia.org/wiki/Unix_filesystem}{unix}\cite{unix}, we propose to build the publishing system on content buckets, called \textit{atoms}, and context buckets, called \textit{molecules}. For all practical purposes one may think of atoms as the smallest unit of published content such as captions, paragraphs, formulae, arguments, media files, data sets etc. Small chunks of content allow for better reusability and updateability. Molecules on the other hand can be thought of as content containers such as review articles, book chapters or monographs. They put atomic content into a context. Atoms can be part of multiple molecules, which is not possible in a folder structure.
 
 How is new content submitted? It is submitted in terms of changes, rather than in standalone bulk. A submitted change is called a \textit{submit}. 
 %Thus a submit is merely difference, rather than a snapshot. This is also reflected in the data storage (see Subsection \ref{ssc:storage}).
-A submit alters and references a previous submit, the \textit{parent submit}.
-Every submit is comprised of changes to the individual atoms and molecules and has a unique history of submits that includes itself and all of its parent submits. This history is is called a \textit{branch} and uniquely identified by its latest submit. The content of one branch may be included into that of another branch, a directional procedure referred to as a \textit{merge}. Branches may have conflicting content. When attempting to merge one branch into another with conflicting content a \textit{merge conflict} arises that should be \textit{resolved}. The overall structure of submissions will be an arbolescence\footnote{For information about the graph-theoretic term of an arbolescence refer to \remark{TODO}.}, a directed tree called the \textit{submitree}. 
+A submit alters and references a previous submit, the \textit{parent submit}. Every submit is comprised of changes to the individual atoms and molecules and has a unique history of submits that includes itself and all of its parent submits. This history is is called a \textit{branch} and uniquely identified by its latest submit. The content of one branch may be included into that of another branch, a directional procedure referred to as a \textit{merge}. Branches may have conflicting content. When attempting to merge one branch into another with conflicting content a \textit{merge conflict} arises that should be \textit{resolved}. The overall structure of submissions will be an arbolescence\footnote{For information about the graph-theoretic term of an arbolescence refer to \remark{TODO}.}, a directed tree called the \textit{submitree}. 
 \remark{Making conflict resolution manifest}
 
 Likewise, at the level of atoms and molecules, there is a linked data structure. The atoms and molecules are arbolescences, called  \textit{atomic submitrees} and \textit{molecular submitrees} respectively. They tend to be less branched, since not every branching submit alters every single atom or molecule. We add \remark{better formulation} a remark on the design choice of submitrees at the bucket level:
