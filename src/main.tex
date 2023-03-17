@@ -14,7 +14,7 @@
     }
     
 %\usepackage[left=1.00cm, right=1.00cm, top=0.75cm, bottom=1.25cm]{geometry} 
-\usepackage[left=2.50cm, right=2.50cm]{geometry}
+\usepackage[left=0.30cm, right=5.70cm, bottom=1.55cm, top=0.75cm]{geometry}
 
 \newcommand{\remark}[1]{{\color{purple} (#1)}}
 
@@ -32,36 +32,46 @@
 \end{abstract}
 \section{Introduction}
 
-With the technological possibilities at our disposal, such as the vast spectrum of data structures, of query and storage systems, of versioning and networking tools, one may create publishing systems that satisfy certain desirables, rather than following the so-called greedy approach of incrementally adjusting the existing one. Starting from a set of requirements for such a system we propose one architecture around the available technology that we call \textit{Lakat}, whilst acknowledging and demarcating it from other proposals. We discuss typical user journeys and attack vectors.
+With the vast spectrum of data structures, of query and storage systems, of versioning and networking tools, one may create publishing systems that satisfy certain desirables, rather than incrementally adjusting the existing one. Starting from a set of requirements for such a system we propose one architecture around the available technology that we call \textit{Lakat}, whilst acknowledging and demarcating it from other proposals. We discuss typical user journeys and attack vectors.
 
-We start with a set of eight core requirements, that we posit for a publishing system. It should be open, permissionless, pluralistic, process-oriented, curatable and sustainable. Furthermore it should make conflict resolution manifest and soft constraints should be prioritized over hard constraints. We will discuss these requirements in detail in the next section. At a high level we propose a distributed database with a local peer-reviewed concensus layer. It serves as a continuous integration and continuous development (CI/CD) solution for collaborative research. Conceptionally one may think of Lakat as a peer-to-peer version of wikipedia with a branch structure and peer review.
+We start with a set of eight core requirements, that we posit for a publishing system. It should be open, permissionless, pluralistic, process-oriented, curatable and sustainable. It should make conflict resolution manifest and allow for AI to participate and contribute. We will discuss these requirements in detail in the next section. We propose a distributed database with a local peer-reviewed concensus layer. The system serves as a continuous integration and continuous development (CI/CD) solution for collaborative research and one may conceptionally think of Lakat as a decentralized version of wikipedia with a branch structure and peer review.
 
 Which problems does it solve?
 
+Comparison to other solutions. 
+``DeSci Labs'', ``Lateral.io'', ``Publishing DAO'', ...
+
 \section{Requirements}
 
-\begin{enumerate}
- \item \textbf{Open} -- 
- Content and code base\footnote{Here we refer to the code base of any client implementation.} should be accessible freely\footnote{Internet service providers are not free. So we refer here to additional charges.}.
- \item \textbf{Permissionless} --
- No one should be barred from contributing.
- \item \textbf{Pluralistic} -- No monopoly on research opinion.\footnote{This is not not necessarily the same as ``No single source of truth''.}
- \item \textbf{Conflict-resolvable} -- Making irreconcilabilities manifest.
- \item \textbf{Reusabile} -- Allowing for the reuse of fragments of other research output.
- \item \textbf{Curatable} -- Putting the curation on par with the content.
- \item \textbf{Sustainable} -- 
- Data and compute resources should be low.
- \item \textbf{soft constraints}
+In this section we provide a list of high-level requirements that we wish to be satisfied by a publication system. We then consider three existing publishing systems in view of those requirements. 
+
+\indent \textbf{1. Open} -- 
+ Content and code base\footnote{Here we refer to the code base of any client implementation.} should be accessible freely\footnote{Internet service providers are not free. So we refer here to additional charges.}.\\
+\indent\textbf{2. Permissionless} --
+ No one should be barred from contributing.\\
+\indent\textbf{3. Pluralistic} -- No monopoly on research opinion.\footnote{This is not not necessarily the same as ``No single source of truth''.}\\
+\indent\textbf{4. Process-oriented} -- Putting the curation on par with the content.\\
+\indent\textbf{5. Conflict-resolvable} -- Making irreconcilabilities manifest.\\
+\indent\textbf{6. Curatable} -- Putting the curation on par with the content.\\
+\indent\textbf{7. Sustainable} -- 
+ Data and compute resources should be low and reuse of fragments encouraged.\\
+%  \item \textbf{soft constraints}
+\indent\textbf{8. AI friendly} -- AI should be able to interact with the system.
+
+Wikipedia\footnote{Here we refer not only to the software implementation, which at the time of writing is version 1.39 of mediawiki, publicly accessible via wikipedia.org (April 2023), but also the body of editors and maintainers.} is an open database. Both its code-base as well as its content can be viewed with access to a non-censored internet connection. A large part of the database can be edited permissionlessly, even without an account. Every article has one current version, often with a rich history of older versions and vivid discussions around edits. At times fierce editing battles can be observed and have been subjected to scientific studies \cite{dedeo}. 
+The possibility to express different views on a matter in the form of versions as well as the discussion adds a pluralistic element, even though the existence of a single current truth in the form of the latest version of an article deducts from that. the multilingual featuer on the other hand makes wikipedia more pluralistic. 
+
+Programmable blockchain is an open database. Is is often referred to as bein permissionless and that is true for most blockchains in the sense that no third party controls read or write access to it.
+
+
+ Making a manifestly pluralist system not only prevents the dictatorship of one academic credo over another, but also allows for conflicting opinions to develope and hopefully to resolve.
  
- 
- 
- Making a manifestly pluralist system not only prevents the dictatorship of one academic credo over another, but also allows for conflicting opinions to develope and hopefully resolve.
- 
-\end{enumerate}
 
 \section{Elements of the Publishing System}
 
-At a high level we propose a permissionless, open and distributed database with a local peer-reviewed concensus layer. Data is submitted as deltas rather than in bulk. Its primary use case is publishing of research. It may be viewed as a layer-1 CI/CD solution for research. Conceptionally one may think of this as a peer-to-peer form of wikipedia with branch structure and peer review. \remark{As a base layer we are aiming to be as agnostic as possible towards the type of storage.} We present the core architecture and then dive into the individual choices in more depth. 
+At a high level we propose a permissionless, open and distributed database with a local peer-reviewed concensus layer. Data is submitted as a set of proposed changes rather than in bulk. It may be viewed as a CI/CD solution for publishing and one may conceptionally think of Lakat as a decentralized form of wikipedia with branch structure and peer review. Its primary use case is publishing of research output. We present the core architecture and then dive into the individual choices in more depth. 
+
+
 
 Content is 
 

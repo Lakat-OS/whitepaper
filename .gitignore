@@ -3,3 +3,5 @@
 *.aux
 *.out
 *.log
+src/*.pdf
+*synctex.gz
