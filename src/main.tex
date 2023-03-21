@@ -43,7 +43,7 @@ Comparison to other solutions.
 
 \section{Requirements}
 
-In this section we provide a list of high-level requirements that we wish to be satisfied by a publication system. We then consider three existing publishing systems in view of those requirements. 
+In this section we provide a list of high-level requirements that we wish to be satisfied by a publication system. We then consider three existing publishing systems in view of those requirements:
 
 \indent \textbf{1. Open} -- 
  Content and code base\footnote{Here we refer to the code base of any client implementation.} should be accessible freely\footnote{Internet service providers are not free. So we refer here to additional charges.}.\\
@@ -56,7 +56,9 @@ In this section we provide a list of high-level requirements that we wish to be 
 \indent\textbf{7. Sustainable} -- 
  Data and compute resources should be low and reuse of fragments encouraged.\\
 %  \item \textbf{soft constraints}
-\indent\textbf{8. AI friendly} -- AI should be able to interact with the system.
+\indent\textbf{8. AI friendly} -- AI should be able to interact with the system.\\
+
+The classical route to publishing is through sending a manuscript to the editors of a peer reviewed journal. The editor(s) then search(es) for reviewers willing to review the manuscript. Is this open? In most cases the article as well as the review, the code base and the data -- if there is any --  are locked behind pay walls, i.e. not accessible publicly. Some journals have various open access options, that allow the abovementioned parts of the publication to be accessible, albeit at a high price for the author both in terms of money and in terms of transferral of rights to the publisher. In principle the system is permissionless, except for those cases where publication fees apply and/or membership in a recognised institution is required. This system is not particularly monopolous, at least prima facie. The de facto sovereignty over what is an exceptable contribution rests with the editor(s) of the journals, but given enough funding new journals can form. The process of the research as well as the review are not well mapped in this system. There is no focus and in particular no build-in focus on resolution of conflicting results. Curation is left to the editors. 
 
 Wikipedia\footnote{Here we refer not only to the software implementation, which at the time of writing is version 1.39 of mediawiki, publicly accessible via wikipedia.org (April 2023), but also the body of editors and maintainers.} is an open database. Both its code-base as well as its content can be viewed with access to a non-censored internet connection. A large part of the database can be edited permissionlessly, even without an account. Every article has one current version, often with a rich history of older versions and vivid discussions around edits. At times fierce editing battles can be observed and have been subjected to scientific studies \cite{dedeo}. 
 The possibility to express different views on a matter in the form of versions as well as the discussion adds a pluralistic element, even though the existence of a single current truth in the form of the latest version of an article deducts from that. the multilingual featuer on the other hand makes wikipedia more pluralistic. 
@@ -68,6 +70,24 @@ Programmable blockchain is an open database. Is is often referred to as bein per
  
 
 \section{Elements of the Publishing System}
+
+We propose a manifestly pluralistic, process-oriented and conflict-resolvable architecture for the continuous integration and continuous development (CI/CD) of publications with a primary use case of research publications. At its core the architecture consists of a linked data structure that resembles a DAG, where the key objects are branches. This data structure facilitates collaborative work in much the same way as git does. Branches may be thought of as the analogue of a journal in traditional publishing (c.f. Subsection ???). The role of journal editors is covered largely by branch contributors. Branches are chains of blocks that contain submissions. Addition of another block happens via a proof of peer review, where the peers are the contributors to that branch. In that sense branches resemble block chains with blocks consisting of submissions instead of transactions and the consensus is provided by a  proof of review, a local (i.e. involving just branch-contributors) consensus rather than a global one.
+The review process follows a weak\footnote{Weak is to be understood in the sense that both parties may choose to reveal their identity.} form of a double-blind protocol, leveraging zero-knowlege proofs.
+Data is content-addressable and conforms to the ipld format. Storage may be delegated to a selection of storage providers, including decentralized storage networks such as ipfs, storj and others to improve resiliance and longevity. In the following we discuss the individual elements of the proposed system and highlight their interaction.
+
+\subsection{Data Structure}
+
+
+\subsection{Users}
+
+A submission contains a proof 
+
+
+
+\subsection{Proof of Review -- A local consensus}
+
+Who decides from whom which contribution should be published? If there was a global consensus about what is a legitimate contribution we would either need one 
+
 
 At a high level we propose a permissionless, open and distributed database with a local peer-reviewed concensus layer. Data is submitted as a set of proposed changes rather than in bulk. It may be viewed as a CI/CD solution for publishing and one may conceptionally think of Lakat as a decentralized form of wikipedia with branch structure and peer review. Its primary use case is publishing of research output. We present the core architecture and then dive into the individual choices in more depth. 
 
