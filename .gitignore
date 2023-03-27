@@ -2,6 +2,8 @@
 
 *.aux
 *.out
+*.bbl
+*.blg
 *.log
 src/*.pdf
 *synctex.gz
