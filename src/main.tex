@@ -16,7 +16,8 @@
     }
     
 %\usepackage[left=1.00cm, right=1.00cm, top=0.75cm, bottom=1.25cm]{geometry} 
-\usepackage[left=0.30cm, right=5.70cm, bottom=1.55cm, top=0.75cm]{geometry}
+% \usepackage[left=0.30cm, right=5.70cm, bottom=1.55cm, top=0.75cm]{geometry}
+\usepackage[left=1.50cm, right=1.50cm, bottom=1.55cm, top=0.75cm]{geometry}
 
 \newcommand{\remark}[1]{{\color{purple} (#1)}}
 
@@ -163,13 +164,25 @@ One can submit interaction data to any branch that holds it. Once a branch proce
  \label{fig:mempool}
 \end{figure}
 
+
+
 \subsection{Protocol}
 \label{ssc:protocol}
+
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{img/BranchBufferOtherScenarioV3.png}
+\end{center}
+ \caption{A hypothetical example of a branch stabilization process either with no veto used or with the veto used and a subsequent social engagement into branch selection. Here we took \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$.}
+ \label{fig:bufferbranches}
+\end{figure}
 
 \subsection{Branch Operations}
 \label{ssc:branchops}
 
 Creating a new branch does not require any consensus. One may broadcast it to some other branches, but there is no way for anyone to impede a branch creation. 
+
+password recovery.  ... upon contribution you receive a share
 
 
 How many contributors should agree for a submit and how many rounds of reviews for a merge. All those are inside the branchConfig.
