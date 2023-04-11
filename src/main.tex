@@ -17,7 +17,7 @@
     
 %\usepackage[left=1.00cm, right=1.00cm, top=0.75cm, bottom=1.25cm]{geometry} 
 % \usepackage[left=0.30cm, right=5.70cm, bottom=1.55cm, top=0.75cm]{geometry}
-\usepackage[left=1.50cm, right=1.50cm, bottom=1.55cm, top=0.75cm]{geometry}
+\usepackage[left=2.15cm, right=2.15cm, bottom=1.55cm, top=0.75cm]{geometry}
 
 \newcommand{\remark}[1]{{\color{purple} (#1)}}
 
@@ -39,7 +39,12 @@
 
 With the vast spectrum of data structures, of query and storage systems, of versioning and networking tools, one may create publishing systems that satisfy certain desirables, rather than incrementally adjusting the existing one. Starting from a set of requirements for such a system we propose one architecture around the available technology that we call \textit{Lakat}, whilst acknowledging and demarcating it from other proposals. We discuss typical user journeys and attack vectors.
 
-We start with a set of eight core requirements, that we posit for a publishing system. It should be open, permissionless, pluralistic, process-oriented, curatable and sustainable. It should make conflict resolution manifest and allow for AI to participate and contribute. We will discuss these requirements in detail in the next section. We propose a distributed database with a local peer-reviewed concensus layer. The system serves as a continuous integration and continuous development (CI/CD) solution for collaborative research and one may conceptionally think of Lakat as a decentralized version of wikipedia with a branch structure and peer review.
+We start with a set of eight core requirements, that we posit for a publishing system. It should be open, permissionless, pluralistic, process-oriented, curatable and sustainable. It should make conflict resolution manifest and allow for AI to participate and contribute. We will discuss these requirements in detail in the next section. We propose a distributed database with a local peer-reviewed concensus layer. The system serves as a continuous integration and continuous development (CI/CD) solution for collaborative research and one may conceptionally think of Lakat as a decentralized version of wikipedia with a branch structure similar to git and a peer review system on top.
+
+The entire architecture of Lakat is heavily inspired by concepts developed by the Hungarian philosopher Imre Lakatos. Probably in an attempt to contribute to the demarcation problem that was prominent in the field of philosophy of science during Lakatos' times and still these days, he developed the concept of a \textit{research programme}, which is also called \textit{Lakatosian research programme} to avoid confusion with the colloquial use of the former term. The demarcation problem asks what it is that sets science apart from pseudo-science. Steering clear of a circular definition of pseudo-science throught the demarcation this problem simply asks "What is science"? We refer the interested reader to the pertinent literature and go on to mention that Lakatos develops his theory on the grounds of a process-oriented account of science. So rather than saying that this or that monolitic bulk of work or set of statements is science or not, he posits that it only processes of amendments to a corpus of previous amendments can be indicative of being science or not. To that end he distinguishes progressive and degenerative amendments. For Lakatos a research programme consists of a \textit{hard core}, which is a set of constituting assumptions, axioms as it were, that capture the essence of a research endeavor and a \textit{protective belt} of auxiliary hypothesis. The assumptions in a core are constituting in the sense that the research programme would cease to exist without them. Rather than saying -- as one might imagine -- that the science--predicate of research programmes relies on modifications of this hard core, he instead endows them with dogmatic immutability, disallowing any hypothetical modifications of them. In a quest for guarding this sacred hard core a research programme can only make ammendments to the protective belt that ought to divert possible attacks to the core. An attack cosists in a conflict of the theory with empiric evidence. 
+
+
+which in lakat correspond to proper branches. For him additions to the research programme can render it progressive or degenerative, which is where he ultimately draws the line between science and pseudoscience. 
 
 Which problems does it solve?
 
@@ -80,7 +85,8 @@ We propose a manifestly pluralistic, process and conflict-oriented architecture 
 The review process follows a weak\footnote{Weak is to be understood in the sense that both parties may choose to reveal their identity.} form of a double-blind protocol, leveraging zero-knowlege proofs.
 Data is content-addressable and conforms to the ipld format. Storage may be delegated to a selection of storage providers, including decentralized storage networks such as ipfs, storj and others to improve resiliance and longevity. In the following we discuss the individual elements of the proposed system and highlight their interaction.
 
-\subsection{Bucket}
+\subsection{Data Structure}
+\subsubsection{Bucket}
 The most elementary data object is the \textit{bucket}. Each and every submitted item is submitted in a bucket: datasets, paragraphs, images and formulae are contained in buckets. These are examples of \textit{atomic buckets}, expressing the fact that they are the building blocks of the system. 
 % We decisively opted against objects that represent traditional folders, where every file belongs to one and only one folder\footnote{In git the folder object is called a \textit{tree node} and it is not possible for a file (called a \textit{blob} in git-speak) to belong to multiple trees. In the unix filesystem it is only possible through the hack of soft and hard links.}.
 Instead of a folder structure we solve the containment relation through designated buckets that we call \textit{molecular buckets}. The data part of those buckets contains merely an arrangement of atomic buckets. One may think of them as the analogue of an article, a book or some other curated content. 
@@ -95,31 +101,41 @@ Instead of a folder structure we solve the containment relation through designat
 \end{figure}
 
 
-Every bucket contains six entries: A \textit{schema}, a \textit{creatorRoot}, a \textit{parent}, a \textit{dataRoot}, a \textit{refsRoot} and a \textit{timestamp}. See Figure \ref{fig:bucket} for an illustration. Here and henceforth the word root refers to the root of a Merkle tree. We go through the entries in turn. The \textit{schema} contains information about the format of the data. For instance we have already mentioned that the data in the molecular buckets is formatted as an arrangement\footnote{The purposefully vague formulation of an 'arrangement' is due to the intention to keep that format flexible. One may think of this as an ordered list, but one might also consider further directives or clustering of content in a directed hypergraph.}. The \textit{creatorRoot} points to information about the creator of this bucket. Identity on \textit{Lakat} is not solved through accounts, but through proofs (see Section \ref{ssc:consensus}). The \textit{parent} is the \textit{content identifier} of the parent bucket. For genesis buckets that would be 0. The \textit{dataRoot} is a content identifier of the data contained in the bucket. In future versions the schema could be absorbed into the dataRoot using the ipld multihash format. This would require a Lakat-specific codec. The \textit{refsRoot} points to all the references made to other buckets within the data. This is necessary, since references to other buckets might be obscured inside the data-encoding. This is an analogue of a list of citations. The \textit{timestamp} records the time of inclusion of the bucket into the branch. One cannot change the data inside the bucket. One would have to create a new bucket that points to the original bucket via its parent entry. 
+Every bucket contains six entries: A \textit{schema}, a \textit{creatorRoot}, a \textit{parent}, a \textit{dataRoot}, a \textit{refsRoot} and a \textit{timestamp}. See Figure \ref{fig:bucket} for an illustration. Here and henceforth the word root refers to the root of a Merkle tree. We go through the entries in turn. The \textit{schema} contains information about the format of the data. For instance we have already mentioned that the data in the molecular buckets is formatted as an arrangement\footnote{The purposefully vague formulation of an 'arrangement' is due to the intention to keep that format flexible. One may think of this as an ordered list, but one might also consider further directives or clustering of content in a directed hypergraph.}. The \textit{creatorRoot} points to information about the creator of this bucket. Identity on \textit{Lakat} is not solved through accounts, but through proofs (see Section \ref{ssc:consensus}). The \textit{parent} is the \textit{content identifier} of the parent bucket. For genesis buckets that would be 0. The \textit{dataRoot} is a content identifier of the data contained in the bucket. In future versions the schema could be absorbed into the dataRoot using the ipld multihash format. This would require a Lakat-specific codec. The \textit{refsRoot} points to all the references made to other buckets within the data. This is necessary, since references to other buckets might be obscured inside the data-encoding. This is an analogue of a list of citations. The \textit{timestamp} records the time of inclusion of the bucket into the branch. It is important to note that we use ethereum block hashes as time stamps in our first version, since the local consensus is too weak to ensure that all participants are truthful to the time otherwise. Anticipating block hash is close to impossible. One cannot change the data inside the bucket. One would have to create a new bucket that points to the original bucket via its parent entry. 
 
-\subsection{Branch}
-The central object type of Lakat is the \textit{branch}. See Figure \ref{fig:branchstructure} for an illustration. Branches represent journals or research communities. They share some properties in common with \textit{git}-branches and some with blockchains. Every branch contains an id, called \textit{branchID} that uniquely identifies it. It also points to a parent branch from which it was branched off. The corresponding entry is called \textit{parentBranch}. This construction turns the set of branches into a linked data structure.\footnote{\remark{Maybe check this} In \textit{git} a branch is simply pointer to the head commit. In blockchains one often encounters ids attached to the chain (so-called \textit{chainid}) to avoid issues when the consensus mechanism yields two differnt chains.} At creation time the branch receives a \textit{timestamp}. The previous entries are all immutable. There are then two mutable entries, namely \textit{head} and \textit{branchToken}. The head is a pointer to the latest submit. A \textit{submit} is a set of changes (see Subsection \ref{ssc:submit} on submits). One may think of it as the Lakat version of an article submission. It has similiarities to a commit in git -- not only phonetically -- but also to a block in \textit{ethereum}. The addition of new submits works through a consensus mechanism called \textit{proof of review} (see Subsection \ref{ssc:consensus}). Also in this respect the branch behaves a lot like a blockchain. Every branch has it's own token, the \textit{branchToken}. It allows funding bodies to fund a particular branch. Token logic is not handled by \textit{Lakat}. Instead this entry essentially points to proofs of transactions on blockchains where the token lives. The purpose of the integration of tokens is to create an incentive layer on top of Lakat, because (unfortunately) \textit{humans} as well as \textit{AI} do not work without incentives.
-The branch also carries configurational metadata, stored in \textit{branchConfig}. Information about the consensus rules and the accepted proofs are contained therein. Their mutability is more constrained than that of the head. Rather than changing with every submit, the config can only change after a \textit{merge}.
-
-The relation between the elementary bucket object and the higher level branch object is not simply a many-to-one relation. Different branches may share the same data. In practice one would expect that most of the data inside a branch is shared with at least one other branch. See Figure \ref{fig:branchbucketrel} for an illustration of this relation.
+\subsubsection{Branch}
+\label{ssc:branch}
 
 \begin{figure}[t!]
 \begin{center}
-\includegraphics[width=\textwidth]{img/BranchV6.png}
+\includegraphics[width=\textwidth]{img/BranchV9.png}
 \end{center}
  \caption{A schematic illustration of the branch object and its entries.}
  \label{fig:branchstructure}
 \end{figure}
+The central object type of Lakat is the \textit{branch}. See Figure \ref{fig:branchstructure} for an illustration. Branches represent journals or research communities. They share some properties with \textit{git}-branches and some with blockchains. Every branch contains an id, called \textit{branchID}, that uniquely identifies it. The immutable entries of a branch and the initial head are hashed to produce the branch identifier. The branch also points to a parent branch from which it was branched off. The corresponding entry is called \textit{parentBranch}. This construction turns the set of branches into a linked data structure.\footnote{\remark{Maybe check this} In \textit{git} a branch is simply pointer to the head commit. In blockchains one often encounters ids attached to the chain (so-called \textit{chainid}) to avoid issues when the consensus mechanism yields two differnt chains.} At creation time the branch receives a \textit{timestamp}. The previous entries are all immutable. There are then four mutable entries, namely \textit{stableHead}, then the two consensus entries \textit{sprouts} and \textit{sproutSelection} and finally \textit{branchToken}. The stable head is a pointer to the latest stable submit. A \textit{submit} is a set of changes (see Subsection \ref{ssc:submit} on submits). One may think of it as the Lakat version of an article submission. It has similiarities to a commit in git -- not only phonetically -- but also to a block in \textit{ethereum}. The addition of new submits works through a consensus mechanism called \textit{proof of review (PoR)} and \textit{lignification} (see Subsection \ref{ssc:consensus}). Also in this respect the branch behaves a lot like a blockchain. Every branch has it's own token, the \textit{branchToken}. It allows funding bodies to fund a particular branch. Token logic is not handled by \textit{Lakat}. Instead this entry essentially points to proofs of transactions on a blockchain where the respective token lives. The purpose of the integration of tokens is to create an incentive layer on top of Lakat, because (unfortunately) \textit{humans} as well as \textit{AI} do not work without incentives. The branch also carries configurational metadata, stored in \textit{branchConfig}. It points to information about the branch type, whether merge conflicts are accepted, the consensus rules and the proofs that are accepted, such as proofs of token transfer or proofs of time. The branchConfig's mutability is more constrained than that of the stable head (See Subsection \ref{ssc:configupdate}).
 
 
-\subsection{Submit}
+There are three types of branches: \textit{proper branches}, \textit{sprouts} and \textit{twigs}. The branch type is stored in the branch config and can be changed under certain conditions. 
+\textit{Proper branches} can only be modified through the local consensus mechanism (see Subsection \ref{ssc:consensus}). They point to a non-empty set of sprouts, which help with the process of producing stable heads in the proper branch. Proper branches cannot be changed to any other branch type. A \textit{sprout} is a short-lived branch that is exclusively used to grow proper branches. Sprouts behave a bit like ommers in the ethereum protocol in the sense that they are contestors to produce the next stable head. Sprout branches point to an empty set of sprouts themselves. The sproutSelection as well as the branchToken entries are empty. The stableHead is immutable. There is only one way to modify the sprout, namely indirectly when it turns into a (rivalling) proper branch during the lignification process (See Subsection \ref{ssc:lignification}). Finally, a \textit{twig} can be thought of a little feature branch. Twigs can be modified through submits by \textit{contributors} of the twig (See Subsection \ref{ssc:contributors} for more information on contributors) or through merges. However, the process of merging into a twig does not need to go through the consensus mechanism of proper branches (See Subsection \ref{ssc:consensus}).
+
+There is a further distinction that is purely conceptual and is not manifested in the technical specification, but rather in the nomenclature. We distinguish a \textit{derived branch} from a \textit{seedling branch} in that the seedling branch has a \textit{singularity submit} without a parent (See Subsection \ref{ssc:submit} for information on submits). A singularity submit corresponds to the genesis block in a blockchain. We invoke here a cosmological metaphore rather than a biblical one. The seedling branch has no parent branch and the corresponding entry points to zero. A derived branch on the other hand has a parent branch that it points to.
+
+We also not that there are various levels at which Lakat can be viewed as a graph, going from high level to low level. At the level of the branches one can form a graph $\mathcal B$, where a branch is a node and a directed link from one branch $A$ to another branch $B$ means that $B$ is the parent of $A$ or that $B$ is merged into $A$ (See Subsection \ref{ssc:merge} regarding merging). This graph is not necessarily a-cyclic, because $A$ can be rooted in $B$ and merge back into $B$. At the level of the submits, a graph $\mathcal S$ can be created with the submits being nodes and a link can be drawn from a submit $q$ to $p$ when $p$ is the parent of $q$. This yields a directed acyclic graph (DAG). Finally at the level of the data buckets there exists a graph structure $\mathcal D$ induced by the parent reference inside the bucket. There is a graph homomorphism from $\mathcal S$ to $\mathcal B$, but not vice versa and there are no homomorphisms between $\mathcal S$ and $\mathcal D$ or $\mathcal B$ and $\mathcal D$. 
+
+
+The relation between the elementary bucket object and the higher level branch object is not simply a many-to-one relation. Different branches may share the some data buckets. In practice one would expect that most of the data inside a branch is shared with at least one other branch. See Figure \ref{fig:branchbucketrel} for an illustration of this relation.
+
+
+
+\subsubsection{Submit}
 \label{ssc:submit}
-The submit points to a previous submit, the \textit{parent} submit. Like in git or ethereum, there is a field reserved for submit-specific data that we call \textit{submitMessage}. The change of the data within the submit is subsumed in \textit{dataRoot}, which is the root of the \textit{DataMPTrie}, a Merkle-Patricia-Trie that references the data state of Lakat (see Section \ref{ssc:datatrie}). The leafs of the trie are the data buckets. They have some resemblance with accounts in the ethereum state trie. Usually only a small part of the entire trie gets updated in a submit. Imagine the trie being all of wikipedia and a submit being just the creation of a new page or even just editing a page. Event though the bucket identifier is immutable it points to mutable entries. This is similar to ethereum, where the leave nodes are immutable account addresses that point to mutable entries like amount of ETH, the contract storage data or the account nonce. The mutable entries in the case of Lakat are made up of information that is attached by other users to the bucket. It is information that is not intrinsic to the bucket. This includes \textit{socialRefs}, \textit{reviews}, \textit{tokens}, \textit{bucketRefs} and \textit{storageProofs}. 
+The submit points to a previous submit, the \textit{parent} submit. Like in git or ethereum, there is a field reserved for submit-specific data that we call \textit{submitMessage}. The change of the data within the submit is subsumed in \textit{trieRoot}, which is the root of the \textit{DataMPTrie}, a Merkle-Patricia-Trie that references the data state of Lakat (see Section \ref{ssc:datatrie}). The leafs of the trie are the data buckets. They have some resemblance with accounts in the ethereum state trie. Usually only a small part of the entire trie gets updated in a submit. Imagine the trie being all of wikipedia and a submit being just the creation of a new page or even just editing a page. Event though the bucket identifier is immutable it points to mutable entries. This is similar to ethereum, where the leave nodes are immutable account addresses that point to mutable entries like amount of ETH, the contract storage data or the account nonce. The mutable entries in the case of Lakat are made up of information that is attached by other users to the bucket. It is information that is not intrinsic to the bucket. This includes \textit{socialRefs}, \textit{reviews}, \textit{tokens}, \textit{bucketRefs} and \textit{storageProofs}. 
 
 The socialRefs resolve to tokens of appreciation, such as thumbs up or down -- the gold standard of social media user interaction. The reviews point to data buckets that contain a review or comments on the bucket in question. The tokens entry allow for the integration of tokens to data buckets. The bucketRefs are two collections of references to other buckets. The first collection is immutable and contains all those other buckets that are referenced inside the bucket data. This second collection is mutable and consists of all those molecular buckets that the atomic bucket is part of. This is a reverse registry that can be understood as how much a content has been reused. There is no analogue in classical publishing. StorageProofs are a ledger of timestamped proofs of storage for the bucket.  
 
 
-\subsection{Data--Trie}
+\subsubsection{Data--Trie}
 \label{ssc:datatrie}
 
 The data buckets as well as the mutable information attached to them can be looked up with the help of a Merkle-Patricia trie, called the \textit{DataMPTrie}. This is cryptographically secure and very useful when resolving the information attached to buckets inside of an article. The keys that are stored in the trie are a truncated version of the content identifiers of the data buckets. And the values are the mutable entries attached to the buckets. To look up the bucket data itself one uses simply the content identifier of the bucket. Storage is handled separately (see Storage in Section \label{ssc:storage}).
@@ -138,13 +154,13 @@ The data at each node is serialized and hashed using a yet to be specified ipld-
  \label{fig:branchbucketrel}
 \end{figure}
 
-\subsection{Storage}
+\subsubsection{Storage}
 \label{ssc:storage}
 
 % i
 The data is stored in key-value databases and is content addressed in the sense that the key equals the multihash of the data. Inside the multihash there is information about the storage protocols used. So if one would use, say ipfs, for storage then a certain flag in the multihash would be raised. If also another protocol or system would be used then this would again be seen through the flag in the multihash. To proof that a certain data bucket has been stored, i.e. pinned, that proof is attached to the mutable information of the bucket in the \textit{storageProofs} entry. There are a few more constraints about storage and pinning. It should be encouraged that every data bucket belongs to at least one molecular bucket so that there are no buckets without a context. Thus when a new data bucket is submitted the submission won't be accepted unless it is present in at least one context bucket.
 
-\subsection{Branch--Requests}
+\subsubsection{Branch--Requests}
 
 Every branch has its own staging area, where any type of branch interactions are waiting to be included. This is called the \textit{Branch--Requests} (or BR in short). It is similar to the mempool in ethereum. Everyone who is participating in the branch (See Protocol \ref{ssc:protocol}) and who runs a light client may receive branch interactions from users and broadcast them to the network. Here we refer to a \textit{client} as a piece of software that is yet to be written, which interacts with the network. A \textit{light client} is a client that is not capable of doing branch operations, but is capable of receiving and broadcasting branch--requests. Inclusion of requests into the branch, however, requires more (see Protocol \ref{ssc:protocol}). There are eight channels in the branch--requests (see Figure \ref{fig:mempool}): \textit{submit requests}, \textit{pull requests}, \textit{review commits}, \textit{review submit requests}, \textit{social transactions}, \textit{token transactions}, \textit{storage updates} and \textit{branch creation broadcast}. The requests inside the BR are not permanently stored. Requests are kept for as long as any of the branch contributors keeps track of them. That is where the similarity to the mempool stems from.
 
@@ -152,7 +168,7 @@ Every channel in the Branch Requests has a certain capacity. In particular this 
 Submit requests contain a serialization of the data buckets that are requested to be added to the branch. Pull requests are simply pings from other branches that seek reviewers. Only by means of a pull request are contributors from the target branch allowed to make modifications to the requesting branch (see Proof of Revie \ref{ssc:consensus}).
 
 
-One can submit interaction data to any branch that holds it. Once a branch processes it, 
+\remark{One can submit interaction data to any branch that holds it. Once a branch processes it, }
 
 
 
@@ -169,15 +185,29 @@ One can submit interaction data to any branch that holds it. Once a branch proce
 \subsection{Protocol}
 \label{ssc:protocol}
 
+
+The protocol level deals with all those aspects that mutate the data.
+
+
+You can only make changes to the branch that you are contributing to. 
+
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=0.85\textwidth]{img/BranchBufferOtherScenarioV3.png}
+    \includegraphics[width=0.79\textwidth]{img/LignificationProcessV5.png}
 \end{center}
- \caption{A hypothetical example of a branch stabilization process either with no veto used or with the veto used and a subsequent social engagement into branch selection. Here we took \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$.}
+ \caption{A hypothetical example of a branch lignification for the following example branch parameters: \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$. Updates 1 to 5 are within the veto time. There are two optional further paths. Either no veto is given, which is the path from step 6a to 7a, or a veto is given at the last possible time of $t=201$ ($=t$(contestor) + \textit{lignificationTime}) through the submit \textit{\#413} at Step 6b. Here the contestor is the submit \textit{\#1b0}. In this hypothetical scenario the contributors of the stable branch \textit{\#3c4} vote in favor of the contesting submit. The new stable part of the branch is thus decided in Step 7b.}
  \label{fig:bufferbranches}
 \end{figure}
 
-\subsection{Branch Operations}
+
+\subsubsection{Contributors}
+\label{ssc:contributors}
+
+\subsubsection{Branch Config Changes}
+
+\subsubsection{Branch Type Changes}
+
+\subsubsection{Branch Operations}
 \label{ssc:branchops}
 
 Creating a new branch does not require any consensus. One may broadcast it to some other branches, but there is no way for anyone to impede a branch creation. 
@@ -188,8 +218,32 @@ password recovery.  ... upon contribution you receive a share
 How many contributors should agree for a submit and how many rounds of reviews for a merge. All those are inside the branchConfig.
 The presets are themselves buckets. Like whether the amount of agreement for a staged submit to be included in terms of score. 
 
-\subsection{Proof of Review}
+
+
+\subsection{Proof of Review (PoR)}
 \label{ssc:consensus}
+
+Who decides which content will be added to a branch? In lakat there is no global notion of what counts as science and what not. There is only a local notion, the detailment of which is the subject of this section. A global consensus mechanism seems to be a good fit for a ledger that keeps track of values that are or ought to be globally agreed upon, i.e. for values that exist qua their global agreement. As opposed to money transactions, the global scope seems ill-fitted for the publication of research content. In our view this requires a local form of consensus. In the context of Lakat, the scope of the locality is at the branch-level. 
+
+What does a branch-level scope mean? This means that the scope is constrained to the \textit{contributors} of a branch. Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who is a creator of content in any of the branch's submits counts as a contributor. 
+
+Another import design choice of Lakat is that 
+
+
+
+but in our view not for research. Consensus is constrained to the branch where the content is supposed to be added. People or actors outside of the branch may or may not agree with that content.
+
+
+We would like to avoid scenarios where an attacker or a crackpot \footnote{A term used in science for someone, who makes unfounded and non-scientific claims. } pushes content to the branch without the consent of the branch. 
+
+What counts as crackpot and what not  
+
+Who decides ultimately what will be added to a branch. This is the lakat rendition of the question: What counts as science and what not. Here lakat differs from Lakatos' idea of  is one where changes are made within a scientific research programme writes that  or in other words what is research and what is not. 
+
+
+\subsubsection{Lignification}
+\label{ssc:lignification}
+
 
 
 \section{User Flows}
