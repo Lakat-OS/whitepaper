@@ -41,7 +41,7 @@ With the vast spectrum of data structures, of query and storage systems, of vers
 
 We start with a set of eight core requirements, that we posit for a publishing system. It should be open, permissionless, pluralistic, process-oriented, curatable and sustainable. It should make conflict resolution manifest and allow for AI to participate and contribute. We will discuss these requirements in detail in the next section. We propose a distributed database with a local peer-reviewed concensus layer. The system serves as a continuous integration and continuous development (CI/CD) solution for collaborative research and one may conceptionally think of Lakat as a decentralized version of wikipedia with a branch structure similar to git and a peer review system on top.
 
-The entire architecture of Lakat is heavily inspired by concepts developed by the Hungarian philosopher Imre Lakatos. Probably in an attempt to contribute to the demarcation problem that was prominent in the field of philosophy of science during Lakatos' times and still these days, he developed the concept of a \textit{research programme}, which is also called \textit{Lakatosian research programme} to avoid confusion with the colloquial use of the former term. The demarcation problem asks what it is that sets science apart from pseudo-science. Steering clear of a circular definition of pseudo-science throught the demarcation this problem simply asks "What is science"? We refer the interested reader to the pertinent literature and go on to mention that Lakatos develops his theory on the grounds of a process-oriented account of science. So rather than saying that this or that monolitic bulk of work or set of statements is science or not, he posits that it only processes of amendments to a corpus of previous amendments can be indicative of being science or not. To that end he distinguishes progressive and degenerative amendments. For Lakatos a research programme consists of a \textit{hard core}, which is a set of constituting assumptions, axioms as it were, that capture the essence of a research endeavor and a \textit{protective belt} of auxiliary hypothesis. The assumptions in a core are constituting in the sense that the research programme would cease to exist without them. Rather than saying -- as one might imagine -- that the science--predicate of research programmes relies on modifications of this hard core, he instead endows them with dogmatic immutability, disallowing any hypothetical modifications of them. In a quest for guarding this sacred hard core a research programme can only make ammendments to the protective belt that ought to divert possible attacks to the core. An attack cosists in a conflict of the theory with empiric evidence. 
+The entire architecture of Lakat is heavily inspired by concepts developed by the Hungarian philosopher Imre Lakatos. Probably in an attempt to contribute to the demarcation problem that was prominent in the field of philosophy of science during Lakatos' times and still these days, he developed the concept of a \textit{research programme}, which is also called \textit{Lakatosian research programme} to avoid confusion with the colloquial use of the former term. The demarcation problem asks what it is that sets science apart from pseudo-science. Steering clear of a circular definition of pseudo-science throught the demarcation this problem simply asks "What is science"? We refer the interested reader to the pertinent literature and go on to mention that Lakatos develops his theory on the grounds of a process-oriented account of science. So rather than saying that this or that monolitic bulk of work or set of statements is science or not, he posits that it only processes of amendments to a corpus of previous amendments can be indicative of being science or not. To that end he distinguishes progressive and degenerative amendments. For Lakatos a research programme consists of a \textit{hard core}, which is a set of constituting assumptions, axioms as it were, that capture the essence of a research endeavor and a \textit{protective belt} of auxiliary hypothesis. The assumptions in a core are constituting in the sense that the research programme would cease to exist without them. Rather than saying -- as one might imagine -- that the science--predicate of research programmes relies on modifications of this hard core, he instead endows them with dogmatic immutability, disallowing any hypothetical modifications of them. In a quest for guarding this sacred hard core a research programme can only make amendments to the protective belt that ought to divert possible attacks to the core. An attack cosists in a conflict of the theory with empiric evidence. 
 
 
 which in lakat correspond to proper branches. For him additions to the research programme can render it progressive or degenerative, which is where he ultimately draws the line between science and pseudoscience. 
@@ -119,18 +119,15 @@ The central object type of Lakat is the \textit{branch}. See Figure \ref{fig:bra
 There are three types of branches: \textit{proper branches}, \textit{sprouts} and \textit{twigs}. The branch type is stored in the branch config and can be changed under certain conditions. 
 \textit{Proper branches} can only be modified through the local consensus mechanism (see Subsection \ref{ssc:consensus}). They point to a non-empty set of sprouts, which help with the process of producing stable heads in the proper branch. Proper branches cannot be changed to any other branch type. A \textit{sprout} is a short-lived branch that is exclusively used to grow proper branches. Sprouts behave a bit like ommers in the ethereum protocol in the sense that they are contestors to produce the next stable head. Sprout branches point to an empty set of sprouts themselves. The sproutSelection as well as the branchToken entries are empty. The stableHead is immutable. There is only one way to modify the sprout, namely indirectly when it turns into a (rivalling) proper branch during the lignification process (See Subsection \ref{ssc:lignification}). Finally, a \textit{twig} can be thought of a little feature branch. Twigs can be modified through submits by \textit{contributors} of the twig (See Subsection \ref{ssc:contributors} for more information on contributors) or through merges. However, the process of merging into a twig does not need to go through the consensus mechanism of proper branches (See Subsection \ref{ssc:consensus}).
 
-There is a further distinction that is purely conceptual and is not manifested in the technical specification, but rather in the nomenclature. We distinguish a \textit{derived branch} from a \textit{seedling branch} in that the seedling branch has a \textit{singularity submit} without a parent (See Subsection \ref{ssc:submit} for information on submits). A singularity submit corresponds to the genesis block in a blockchain. We invoke here a cosmological metaphore rather than a biblical one. The seedling branch has no parent branch and the corresponding entry points to zero. A derived branch on the other hand has a parent branch that it points to.
+In this paragraph we merely introduce some nomenclature. We distinguish between \textit{core} and \textit{belt} branches, which correspond to \textit{this} and \textit{other} in git. These are not intrinsic properties of branches, but denote the role they play during a merge. Lakat only has one type of merge. The core branch will be updated and the belt branch not (see Susbsection \ref{ssc:merge} for information on merges). A branch may be a core with respect to one merge and a belt with respect to another merge. This terminology originates in the core-belt dichotomy of Lakatosian research programmes. There is a further distinction that is purely conceptual and is not manifested in the technical specification, but in the nomenclature. We distinguish a \textit{derived branch} from a \textit{seedling branch} in that the seedling branch has a \textit{singularity submit} without a parent (See Subsection \ref{ssc:submit} for information on submits). A singularity submit corresponds to the genesis block in a blockchain. We invoke here a cosmological metaphore rather than a biblical one. The seedling branch has no parent branch and the corresponding entry points to zero. A derived branch on the other hand has a parent branch that it points to. We say that the derived branch is \textit{rooted} in the parent branch. The \textit{root} of a derived branch is the last submit in the submit history that is also in the history of the parent branch.
 
-We also not that there are various levels at which Lakat can be viewed as a graph, going from high level to low level. At the level of the branches one can form a graph $\mathcal B$, where a branch is a node and a directed link from one branch $A$ to another branch $B$ means that $B$ is the parent of $A$ or that $B$ is merged into $A$ (See Subsection \ref{ssc:merge} regarding merging). This graph is not necessarily a-cyclic, because $A$ can be rooted in $B$ and merge back into $B$. At the level of the submits, a graph $\mathcal S$ can be created with the submits being nodes and a link can be drawn from a submit $q$ to $p$ when $p$ is the parent of $q$. This yields a directed acyclic graph (DAG). Finally at the level of the data buckets there exists a graph structure $\mathcal D$ induced by the parent reference inside the bucket. There is a graph homomorphism from $\mathcal S$ to $\mathcal B$, but not vice versa and there are no homomorphisms between $\mathcal S$ and $\mathcal D$ or $\mathcal B$ and $\mathcal D$. 
-
-
-The relation between the elementary bucket object and the higher level branch object is not simply a many-to-one relation. Different branches may share the some data buckets. In practice one would expect that most of the data inside a branch is shared with at least one other branch. See Figure \ref{fig:branchbucketrel} for an illustration of this relation.
+We also not that there are various levels at which Lakat can be viewed as a graph, going from high level to low level. At the level of the branches one can form a graph $\mathcal B$, where a branch is a node and a directed link from one branch $A$ to another branch $B$ means that $B$ is the parent of $A$ or that $B$ is merged into $A$ (See Subsection \ref{ssc:merge} regarding merging). This directed graph is not necessarily a-cyclic, because $A$ can be rooted in $B$ and merge back into $B$, however if one excludes merges it is. At the level of the submits, a graph $\mathcal S$ can be created with the submits being nodes and a link can be drawn from a submit $q$ to $p$ when $p$ is the parent of $q$. This yields a directed acyclic graph (DAG). Finally at the level of the data buckets there exists a graph structure $\mathcal D$ induced by the parent reference inside the bucket. There is a graph homomorphism from $\mathcal S$ to $\mathcal B$, but not vice versa and there are no homomorphisms between $\mathcal S$ and $\mathcal D$ or $\mathcal B$ and $\mathcal D$. The lack of a homomorphism between the submit structure and the data structure indicates that these are two separate layers. The relation between the elementary bucket object and the higher level branch object is not simply a many-to-one relation. Different branches may share the some data buckets. In practice one would expect that most of the data inside a branch is shared with at least one other branch. See Figure \ref{fig:branchbucketrel} for an illustration of this relation.
 
 
 
 \subsubsection{Submit}
 \label{ssc:submit}
-The submit points to a previous submit, the \textit{parent} submit. Like in git or ethereum, there is a field reserved for submit-specific data that we call \textit{submitMessage}. The change of the data within the submit is subsumed in \textit{trieRoot}, which is the root of the \textit{DataMPTrie}, a Merkle-Patricia-Trie that references the data state of Lakat (see Section \ref{ssc:datatrie}). The leafs of the trie are the data buckets. They have some resemblance with accounts in the ethereum state trie. Usually only a small part of the entire trie gets updated in a submit. Imagine the trie being all of wikipedia and a submit being just the creation of a new page or even just editing a page. Event though the bucket identifier is immutable it points to mutable entries. This is similar to ethereum, where the leave nodes are immutable account addresses that point to mutable entries like amount of ETH, the contract storage data or the account nonce. The mutable entries in the case of Lakat are made up of information that is attached by other users to the bucket. It is information that is not intrinsic to the bucket. This includes \textit{socialRefs}, \textit{reviews}, \textit{tokens}, \textit{bucketRefs} and \textit{storageProofs}. 
+Submits bundle up changes to the data with some additional metadata. Every submit points to a previous submit, the \textit{parent} submit. There exist \textit{singularity} submits that have no parent. The parent entry of those submits is zero. Like in git or ethereum, there is a field reserved for submit-specific data that we call \textit{submitMessage}. The change of the data within the submit is subsumed in \textit{trieRoot}, which is the root of the \textit{DataMPTrie}, a Merkle-Patricia-Trie that references the data state of Lakat (see Section \ref{ssc:datatrie}). The leafs of the trie are the data buckets. They have some resemblance with accounts in the ethereum state trie. Usually only a small part of the entire trie gets updated in a submit. Imagine the trie being all of wikipedia and a submit being just the creation of a new page or even just editing a page. Event though the bucket identifier is immutable it points to mutable entries. This is similar to ethereum, where the leave nodes are immutable account addresses that point to mutable entries like amount of ETH, the contract storage data or the account nonce. The mutable entries in the case of Lakat are made up of information that is attached by other users to the bucket. It is information that is not intrinsic to the bucket. This includes \textit{socialRefs}, \textit{reviews}, \textit{tokens}, \textit{bucketRefs} and \textit{storageProofs}. 
 
 The socialRefs resolve to tokens of appreciation, such as thumbs up or down -- the gold standard of social media user interaction. The reviews point to data buckets that contain a review or comments on the bucket in question. The tokens entry allow for the integration of tokens to data buckets. The bucketRefs are two collections of references to other buckets. The first collection is immutable and contains all those other buckets that are referenced inside the bucket data. This second collection is mutable and consists of all those molecular buckets that the atomic bucket is part of. This is a reverse registry that can be understood as how much a content has been reused. There is no analogue in classical publishing. StorageProofs are a ledger of timestamped proofs of storage for the bucket.  
 
@@ -181,15 +178,25 @@ Submit requests contain a serialization of the data buckets that are requested t
 \end{figure}
 
 
+\subsection{Contributors}
+\label{ssc:contributors}
 
-\subsection{Protocol}
-\label{ssc:protocol}
+Every branch has \textit{contributors}, or rather contributors have branches. A contributor is an account that can prove to have contributed to a given branch. There are four types of contributors for any given branch: \textit{content contributors}, \textit{review contributors}, \textit{token contributors} and \textit{storage contributors}. A content contributor can prove to have submitted to the branch. A review contributor is someone who can prove to have pushed reviews to the branch (see Subsection \ref{ssc:por} for information on proof of review). A token contributor is someone who can prove to have deposited funds into the branch. A storage contributor is someone who can prove to store data of that branch. Being a contributor means that you have to prove your contribution for the submits from the root submit of the branch till the current stable head.
+How does the set of contributors change during a merge? What is the relation betwen the contributors of two branches before the marege and after? When the belt branch merged into the core following a pull request, then the new set of contributors is simply the union of the two branches (see Subsection \ref{ssc:branch} for the terms core and belt). That holds for all contributor types. When there is no pull request preceding the merge the contributors of this branch are unaltered.
+The main idea behind the concept of contributors is the mutability, governance and autonomy of branches. Branches can only be modified by their contributors. This attempts to preempt attacks on branches.
 
+% 
+% Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who is a creator of content in any of the branch's submits counts as a contributor (See Subsection \ref{ssc:contributor}). 
 
-The protocol level deals with all those aspects that mutate the data.
-
-
-You can only make changes to the branch that you are contributing to. 
+% 
+% \subsection{Protocol}
+% \label{ssc:protocol}
+% 
+% 
+% The protocol level deals with all those aspects that mutate the data.
+% 
+% 
+% You can only make changes to the branch that you are contributing to. 
 
 \begin{figure}[h!]
   \begin{center}
@@ -198,6 +205,45 @@ You can only make changes to the branch that you are contributing to.
  \caption{A hypothetical example of a branch lignification for the following example branch parameters: \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$. Updates 1 to 5 are within the veto time. There are two optional further paths. Either no veto is given, which is the path from step 6a to 7a, or a veto is given at the last possible time of $t=201$ ($=t$(contestor) + \textit{lignificationTime}) through the submit \textit{\#413} at Step 6b. Here the contestor is the submit \textit{\#1b0}. In this hypothetical scenario the contributors of the stable branch \textit{\#3c4} vote in favor of the contesting submit. The new stable part of the branch is thus decided in Step 7b.}
  \label{fig:bufferbranches}
 \end{figure}
+
+
+\subsubsection{Local Consensus}
+\label{ssc:localconsensus}
+
+Who decides which content will be added to a branch? In lakat there is no global notion of what counts as science and what does not. There is only a local notion, the detailment of which is the subject of this section. A global consensus mechanism seems to be a good fit for a ledger that keeps track of values that are or ought to be globally agreed upon, i.e. for values that exist qua their global agreement. In contrast to money transactions, the global scope seems ill-fitted for the publication of research content. In our view this requires a local form of consensus. In the context of Lakat, the scope of the locality is at the branch-level. 
+
+What does a branch-level scope mean? This means that the scope is constrained to the \textit{contributors} of a branch. Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who is a creator of content in any of the branch's submits counts as a contributor (See Subsection \ref{ssc:contributor}). 
+
+Branch contributors form the basis of the consensus mechanism. We entrench this deep into the protocol by allowing only branch contributors to make changes to the branch that they are contributing to. This design choice also keeps potential attackers or crackpots from pushing unwanted content to a branch. Lakat does not make statements about what counts as science and what not. What counts as a legitimate scientific contribution purely emerges through the local consensus. One contribution that is viewed as being unfounded or unscientific for one branch might be viewed the opposite on another branch. This gives space for pluralism and allows for the organic selection of branches with differing quality assurance criteria.  
+
+The local consensus paradigm (see Subsection \ref{ssc:localconsensus}) is governing amendments to branches, namely to  twigs, i.e. the fast-paced feature branches, and to proper branches. Sprouts on the other hand are just auxiliary objects that cannot be modified directly and are thus not amenable to a consensus mechanism. The consensus paradigm for twigs simply states that any branch contributor can push submits to the twig and merging into a twig requires all contributors to agree (See Subsection \ref{ssc:twigs}). For proper branches the local consensus takes on a different form. It is divided into proof of review (See Subsection \ref{ssc:por}), broadcasting (See Subsection \ref{ssc:broadcasting}) and lignification (See Subsection \ref{ssc:lignification}).
+
+
+
+\subsubsection{Proof of Review (PoR)}
+\label{ssc:por}
+
+Before a branch can be merged into a proper branch it needs to undergo a review. We describe this process keeping to the notation of \textit{belt} as the branch that seeks to be merged and \textit{core} as the target of the merge (see Subsection \ref{ssc:branch} for the terms core and belt).
+
+To start the review process an \textit{issuing branch} creates a pull request from a \textit{requesting branch} to a \textit{target branch}. The pull request is a submit with two properties: First it contains a new context data bucket, called the \textit{review bucket}, that will hold all the forthcoming information of the review. It may of course contain other buckets besides that. Second, it leaves a trace of the information about the pull request in the pullRequests entry of the \textit{submitTrace}, namely pointers to the review bucket, to the target branch and the requesting branch. In most cases the issuing branch and the requesting branch are identical. However, the requesting branch may also act as a proxy requester. This is the case when a proper branch seeks to be merged into a target branch. Since this intention would itself have to pass through the consensus rule, one would have to create a feature branch, i.e. a twig, and include therein the proxy pull request. Once that feature gets included into the proper branch by passing  the consensus, the review process can begin on the proper branch. We call a pull request \textit{mature} when it is included in the requesting branch. In the most common scenario where the issuing and requesting branch coincide maturity is immediate. 
+% In the ensuing merging process the requesting branch becomes the belt and the target branch becomes the core.}
+Once a pull request becomes mature a message will be send to the target branch  its contributors are invited to review the requesting branch. The message is simply a reference to the pull request sent to the pullRequests channel of the target's branch requests (see Subsection \ref{ssc:mempool}).
+Any content contributor of the target branch can then become a review contributor of the requesting branch. They must publish a review commitment on the requesting branch. This makes them official contributors to that branch. It also helps to gauge general reviewers engangement for prior to the actual review. This is helpful both for those who seek to merge and those who seek to review. It also increases accountability of the committing reviewer. Failing to supply a review after a commitment could be penalized via the social engagement (see Subsection \ref{ssc:socialrefs}).  
+Committers publish their commitment in the reviewsTrace of the submitTrace. The cannot submit reviews without that commitment and the cannot submit the commitment if they have are (also) content contributors of the requesting branch. 
+¸
+Once a pull request has been opened, which happens with the inclusion of the submit into the prospective belt part of the merge.
+
+
+
+How about merging branches that do not seek to be merged into this branch. In that case there is at least one contributor of this who seeks to merge that branch. So this contributor creates a twig, merges that branch into the twig and creates a pull request to this branch.
+
+
+
+
+\subsubsection{Lignification}
+\label{ssc:lignification}
+
+
 
 
 \subsubsection{Contributors}
@@ -218,31 +264,6 @@ password recovery.  ... upon contribution you receive a share
 How many contributors should agree for a submit and how many rounds of reviews for a merge. All those are inside the branchConfig.
 The presets are themselves buckets. Like whether the amount of agreement for a staged submit to be included in terms of score. 
 
-
-
-\subsection{Proof of Review (PoR)}
-\label{ssc:consensus}
-
-Who decides which content will be added to a branch? In lakat there is no global notion of what counts as science and what not. There is only a local notion, the detailment of which is the subject of this section. A global consensus mechanism seems to be a good fit for a ledger that keeps track of values that are or ought to be globally agreed upon, i.e. for values that exist qua their global agreement. As opposed to money transactions, the global scope seems ill-fitted for the publication of research content. In our view this requires a local form of consensus. In the context of Lakat, the scope of the locality is at the branch-level. 
-
-What does a branch-level scope mean? This means that the scope is constrained to the \textit{contributors} of a branch. Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who is a creator of content in any of the branch's submits counts as a contributor. 
-
-Another import design choice of Lakat is that 
-
-
-
-but in our view not for research. Consensus is constrained to the branch where the content is supposed to be added. People or actors outside of the branch may or may not agree with that content.
-
-
-We would like to avoid scenarios where an attacker or a crackpot \footnote{A term used in science for someone, who makes unfounded and non-scientific claims. } pushes content to the branch without the consent of the branch. 
-
-What counts as crackpot and what not  
-
-Who decides ultimately what will be added to a branch. This is the lakat rendition of the question: What counts as science and what not. Here lakat differs from Lakatos' idea of  is one where changes are made within a scientific research programme writes that  or in other words what is research and what is not. 
-
-
-\subsubsection{Lignification}
-\label{ssc:lignification}
 
 
 
