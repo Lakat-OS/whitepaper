@@ -87,6 +87,7 @@ Data is content-addressable and conforms to the ipld format. Storage may be dele
 
 \subsection{Data Structure}
 \subsubsection{Bucket}
+\label{ssc:bucket}
 The most elementary data object is the \textit{bucket}. Each and every submitted item is submitted in a bucket: datasets, paragraphs, images and formulae are contained in buckets. These are examples of \textit{atomic buckets}, expressing the fact that they are the building blocks of the system. 
 % We decisively opted against objects that represent traditional folders, where every file belongs to one and only one folder\footnote{In git the folder object is called a \textit{tree node} and it is not possible for a file (called a \textit{blob} in git-speak) to belong to multiple trees. In the unix filesystem it is only possible through the hack of soft and hard links.}.
 Instead of a folder structure we solve the containment relation through designated buckets that we call \textit{molecular buckets}. The data part of those buckets contains merely an arrangement of atomic buckets. One may think of them as the analogue of an article, a book or some other curated content. 
@@ -101,7 +102,7 @@ Instead of a folder structure we solve the containment relation through designat
 \end{figure}
 
 
-Every bucket contains six entries: A \textit{schema}, a \textit{creatorRoot}, a \textit{parent}, a \textit{dataRoot}, a \textit{refsRoot} and a \textit{timestamp}. See Figure \ref{fig:bucket} for an illustration. Here and henceforth the word root refers to the root of a Merkle tree. We go through the entries in turn. The \textit{schema} contains information about the format of the data. For instance we have already mentioned that the data in the molecular buckets is formatted as an arrangement\footnote{The purposefully vague formulation of an 'arrangement' is due to the intention to keep that format flexible. One may think of this as an ordered list, but one might also consider further directives or clustering of content in a directed hypergraph.}. The \textit{creatorRoot} points to information about the creator of this bucket. Identity on \textit{Lakat} is not solved through accounts, but through proofs (see Section \ref{ssc:consensus}). The \textit{parent} is the \textit{content identifier} of the parent bucket. For genesis buckets that would be 0. The \textit{dataRoot} is a content identifier of the data contained in the bucket. In future versions the schema could be absorbed into the dataRoot using the ipld multihash format. This would require a Lakat-specific codec. The \textit{refsRoot} points to all the references made to other buckets within the data. This is necessary, since references to other buckets might be obscured inside the data-encoding. This is an analogue of a list of citations. The \textit{timestamp} records the time of inclusion of the bucket into the branch. It is important to note that we use ethereum block hashes as time stamps in our first version, since the local consensus is too weak to ensure that all participants are truthful to the time otherwise. Anticipating block hash is close to impossible. One cannot change the data inside the bucket. One would have to create a new bucket that points to the original bucket via its parent entry. 
+Every bucket contains six entries: A \textit{schema}, a \textit{creatorRoot}, a \textit{parent}, a \textit{dataRoot}, a \textit{refsRoot} and a \textit{timestamp}. See Figure \ref{fig:bucket} for an illustration. Here and henceforth the word root refers to the root of a Merkle tree. We go through the entries in turn. The \textit{schema} contains information about the format of the data. For instance we have already mentioned that the data in the molecular buckets is formatted as an arrangement\footnote{The purposefully vague formulation of an 'arrangement' is due to the intention to keep that format flexible. One may think of this as an ordered list, but one might also consider further directives or clustering of content in a directed hypergraph.}. The \textit{creatorRoot} points to information about the creator of this bucket. Identity on \textit{Lakat} is solved through proofs (see Section \ref{ssc:proofs}). The \textit{parent} is the \textit{content identifier} of the parent bucket. For genesis buckets that would be 0. The \textit{dataRoot} is a content identifier of the data contained in the bucket. In future versions the schema could be absorbed into the dataRoot using the ipld multihash format. This would require a Lakat-specific codec. The \textit{refsRoot} points to all the references made to other buckets within the data. This is necessary, since references to other buckets might be obscured inside the data-encoding. This is an analogue of a list of citations. The \textit{timestamp} records the time of inclusion of the bucket into the branch. It is important to note that we use ethereum block hashes as time stamps in our first version, since the local consensus is too weak to ensure that all participants are truthful to the time otherwise. Anticipating block hash is close to impossible. One cannot change the data inside the bucket. One would have to create a new bucket that points to the original bucket via its parent entry. 
 
 \subsubsection{Branch}
 \label{ssc:branch}
@@ -177,8 +178,8 @@ Submit requests contain a serialization of the data buckets that are requested t
  \label{fig:mempool}
 \end{figure}
 
-
-\subsection{Contributors}
+\subsection{Contributors and Contributions}
+\subsubsection{Contributors}
 \label{ssc:contributors}
 
 Every branch has \textit{contributors}, or rather contributors have branches. A contributor is an account that can prove to have contributed to a given branch. There are four types of contributors for any given branch: \textit{content contributors}, \textit{review contributors}, \textit{token contributors} and \textit{storage contributors}. A content contributor can prove to have submitted to the branch. A review contributor is someone who can prove to have pushed reviews to the branch (see Subsection \ref{ssc:por} for information on proof of review). A token contributor is someone who can prove to have deposited funds into the branch. A storage contributor is someone who can prove to store data of that branch. Being a contributor means that you have to prove your contribution for the submits from the root submit of the branch till the current stable head.
@@ -198,6 +199,76 @@ The main idea behind the concept of contributors is the mutability, governance a
 % 
 % You can only make changes to the branch that you are contributing to. 
 
+
+
+\subsubsection{Contributions}
+\label{ssc:contributions}
+
+
+\subsubsection{Proof of Contribution}
+\label{ssc:proofofcontributions}
+
+
+\subsection{Local Consensus}
+\label{ssc:localconsensus}
+
+Who decides which content will be added to a branch? In lakat there is no global notion of what counts as science and what does not. There is only a local notion, the detailment of which is the subject of this section. A global consensus mechanism seems to be a good fit for a ledger that keeps track of values that are or ought to be globally agreed upon, i.e. for values that exist qua their global agreement. In contrast to money transactions, the global scope seems ill-fitted for the publication of research content. In our view this requires a local form of consensus. In the context of Lakat, the scope of the locality is at the branch-level. 
+
+What does a branch-level scope mean? This means that the scope is constrained to the \textit{contributors} of a branch. Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who can prove the contribution of content in any of the branch's submits counts as a contributor (See Subsection \ref{ssc:contributor}). 
+
+Branch contributors form the basis of the consensus mechanism. We entrench this deep into the protocol by allowing only branch contributors to make changes to the branch that they are contributing to. This design choice also keeps potential attackers or crackpots from pushing unwanted content to a branch. Lakat does not make statements about what counts as science and what not. What counts as a legitimate scientific contribution purely emerges through the local consensus. One contribution that is viewed as being unfounded or unscientific for one branch might be viewed the opposite on another branch. In some sense this reflects a Feyerabendian approach \cite{}. It gives space for pluralism and allows for the organic selection of branches with possibly differing demarcation criteria. There is, however a positive momentum expected to emerge towards methodic agreements at least across branches that are close to each other. Branches that are close have branched off recently and possibly disagree more on technical grounds than on methodic grounds or they are simply feature branches that are to be merged back in. There is an overall incentive to merge branches, derived from the persistence of the data and the value of the token (see Subsection \ref{ssc:incentive} for possible incentive structures). 
+
+The local consensus paradigm is governing amendments to branches, both to twigs and to proper branches. Sprouts on the other hand are just auxiliary objects that cannot be modified directly and are thus not amenable to a consensus mechanism. The consensus paradigm for twigs simply states that any branch contributor can push submits to the twig whereas merging into a twig requires a certain fraction of contributors to agree (See Subsection \ref{ssc:twigs} for twigs and Subsection \ref{ssc:twiglocalconsensus} for consensus on twigs). For proper branches the local consensus takes on a different form. It is divided into proof of review (See Subsection \ref{ssc:por}), broadcasting and lignification (See Subsection \ref{ssc:lignification}).
+
+\subsubsection{Local Consensus of Feature Branches}\label{ssc:twiglocalconsensus}
+
+Twigs are meant to be used rather quick iteration. They behave like feature branches. Here is an example where twigs are expected to be used: If an individual or an AI would like to add content to a target branch, say an article or some modifications or both, it creates a feature branch rooted in the target branch which subsequently goes through the proof of review consensus mechanism (see Subsection \ref{ssc:por}). Typically the number of content contributors on a twig will be low. Maybe a single author or a small group of authors at it is the case for article publications. In order to not compromise the momentum and the quick iteration both content contributors and review contributors (if there are any) can push to the branch directly. Merges can also be pushed, but require a fraction of approvals of the content contributors. The fraction is determined in the config of the twig. 
+
+\subsubsection{Proof of Review (PoR)}
+\label{ssc:por}
+
+Before a branch can be merged into a proper branch it needs to undergo a review. Table \ref{tab:reviewProcess} summarizes the steps.
+% % We describe this process keeping to the notation of \textit{belt} as the branch that seeks to be merged and \textit{core} as the target of the merge (see Subsection \ref{ssc:branch} for the terms core and belt).
+To start the review process an \textit{issuing branch} creates a pull request from a \textit{requesting branch} to a \textit{target branch}. The pull request is a submit with two properties: First it contains a newly created context data bucket, called the \textit{review container}, that will hold all the forthcoming information of the review. It may of course contain other buckets besides that. Second, it leaves a trace of the information about the pull request in the pullRequests entry of the \textit{submitTrace}, namely pointers to the review container, to the target branch and the requesting branch. In most cases the review happens on a twig, which acts as a feature branch. There the issuing branch and the requesting branch are identical, because the twig requests for itself to be pulled into the target branch. However, the requesting branch may also act as a proxy requester. This is the case when a proper branch rather than a twig seeks to be merged into a target branch. Since this intention itself must pass through the consensus rule of that proper branch, one would have to create a twig and include therein the proxy pull request. Once that twig is successfully merged into the actual requesting branch by passing the consensus, the review process can begin on that proper branch for it be mergeable into the target branch. We call a pull request \textit{mature} once it is included in the requesting branch. In the most common scenario where the issuing and requesting branch coincide maturity is immediate. 
+% In the ensuing merging process the requesting branch becomes the belt and the target branch becomes the core.}
+Once a pull request becomes mature a message will be send to the target branch  where its contributors are invited to review the requesting branch. The message is simply a reference to the pull request sent to the pullRequests channel of the target's \textit{branchRequests} (see Subsection \ref{ssc:mempool} for branch requests).
+Any content contributor of the target branch who is not also contributing to the requesting branch can then become a \textit{review contributor} of the requesting branch. They must publish a review commitment on the requesting branch. This makes them official contributors to that branch. It also helps to gauge general reviewers engangement prior to the actual review. This is helpful both for those who seek to merge and those who seek to review. It also increases accountability of the committing reviewer. Failing to supply a review after a commitment could be penalized via the social engagement (see Subsection \ref{ssc:socialrefs}).  
+Committers publish their commitment in the reviewsTrace of the submitTrace. They cannot submit reviews without that commitment. 
+
+
+Reviewers then push review submits to the requesting branch. A review submit consists of the following: A bucket with a review, called a \textit{review item}. This bucket should reference all the data buckets that it has reviewed. In the respective interaction data (see Subsection \ref{ssc:branch}) of all those reviewed buckets a reference to the review item is stored within the reviews entry. Finally the review item gets referenced in the review container of the pull request. Updating the review bucket, as with any bucket update, consists of creating a new review bucket that points to the old one through the parent entry\footnote{In future versions of Lakat we wish to move to updates via deltas.}. The branchConfig of the target branch specifies the pre-requisites for a merge. This consists of the minimum number of reviewers, a rule for acceptance and a minimum number of review rounds, which could be one by default. The rule of acceptance could be preset aswell. For instance one could reject requests when a certain fraction of reviewers reject and accept when there are no rejections and specify some rule for the middle ground. Once all the requirements of the target branch are satisfied the branch is ready to be merged. 
+
+How about merging branches that do not seek to be merged? This can be the case when trying to merge the newest developments from a remote branch. This case is in fact already covered by the respective consensus mechanisms of twigs and proper branches. Merging into twigs requires a fraction of content contributors to agree (see Subsection \ref{ssc:twiglocalconsensus}). Merging into proper branches requires a pull request and subsequent reviews, so it is not possible to just merge other branches in the same way that one merges reviewed twigs. Therefore, one would have to create a twig that merges the remote branch as a feature. It then requests to be merged und the merge undergoes a review.
+
+
+
+\begin{table}
+  \begin{tabular}{|p{0.025\textwidth}|p{0.3\linewidth}|p{0.595\textwidth}|}
+  \hline
+  \textbf{\#} & \textbf{Step} & \textbf{Description} \\
+  \hline\hline
+  1 & Create pull request & The issuing branch creates a request for the requesting branch (in most cases identical) to be merged into the target branch \\
+  2 & Maturity of the pull request & The pull request becomes a submit in the requesting branch\\
+ \hline
+  \end{tabular}
+
+  \caption{Overview of the Proof--of--Review (PoR) process}
+ \label{tab:reviewProcess}
+\end{table}
+
+\subsubsection{Broadcasting and Lignification}
+\label{ssc:lignification}
+
+How is the multitude of reviewed pull requests bundled up and sequenced into a single branch and why is the process important and how is the required attention bandwidth kept to a minimum? In order to explain the Lakat answer to this question we first contrast it to the case of blockchains: There transactions are bundled into blocks. They are then broadcasted across the network of nodes. When different blocks  with the same parent are broadcasted, there will be several conflicting versions of the blockchain state. In ethererum prior to the transition from the proof-of-work to the proof-of-stake these alternative versions were called ommers and mostly the result of latency in the broadcasting, but of course also attacks or client issues. To make sure that a transaction has irrevocably been added into the blockchain one would have to wait for a few blocks. 
+
+In Lakat we solve the issue through a process that we call \textit{lignification}. The idea is that amongst the potentially plentiful and conflicting versions of the new branch state eventually a new head will be chosen. This head is then called the stable head. The versions are stored as short-lived branches, called sprouts, and pointed to in the \textit{sprouts} entry of the branch. Why is the process of choosing a successor to the stable head important? The branch is an object that is kept alive by an ecosystem of contributors. It could get hijacked by a group of bad actors who became branch contributors through a mal-reviewed pull-request. Though in principle, if this happened, the contributors that disagreed with this malicious onboarding could bail out by creating a new branch. However, this new branch would have to grow the reputation of its contributors anew, seek new storage providers, have a new branch token and would generally have to start from scratch. It might not even be an attack, but a disagreement in the community that leads to a branching.
+Even though this process constitutes an important security measure for the branch, it should not create an overload of attention demanded from the branch contributors. In most cases there will be no action required. But it is precisely those rare case where such a security measure becomes valuable. So one of the requirements for this process is that the branch production continues unambiguously when there is no interference from the community of contributors. In the following we introduce the process of broadcasting and lignification in more detail.
+
+The act of broadcasting 
+
+
+
+
 \begin{figure}[h!]
   \begin{center}
     \includegraphics[width=0.79\textwidth]{img/LignificationProcessV5.png}
@@ -207,51 +278,13 @@ The main idea behind the concept of contributors is the mutability, governance a
 \end{figure}
 
 
-\subsubsection{Local Consensus}
-\label{ssc:localconsensus}
-
-Who decides which content will be added to a branch? In lakat there is no global notion of what counts as science and what does not. There is only a local notion, the detailment of which is the subject of this section. A global consensus mechanism seems to be a good fit for a ledger that keeps track of values that are or ought to be globally agreed upon, i.e. for values that exist qua their global agreement. In contrast to money transactions, the global scope seems ill-fitted for the publication of research content. In our view this requires a local form of consensus. In the context of Lakat, the scope of the locality is at the branch-level. 
-
-What does a branch-level scope mean? This means that the scope is constrained to the \textit{contributors} of a branch. Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who is a creator of content in any of the branch's submits counts as a contributor (See Subsection \ref{ssc:contributor}). 
-
-Branch contributors form the basis of the consensus mechanism. We entrench this deep into the protocol by allowing only branch contributors to make changes to the branch that they are contributing to. This design choice also keeps potential attackers or crackpots from pushing unwanted content to a branch. Lakat does not make statements about what counts as science and what not. What counts as a legitimate scientific contribution purely emerges through the local consensus. One contribution that is viewed as being unfounded or unscientific for one branch might be viewed the opposite on another branch. This gives space for pluralism and allows for the organic selection of branches with differing quality assurance criteria.  
-
-The local consensus paradigm (see Subsection \ref{ssc:localconsensus}) is governing amendments to branches, namely to  twigs, i.e. the fast-paced feature branches, and to proper branches. Sprouts on the other hand are just auxiliary objects that cannot be modified directly and are thus not amenable to a consensus mechanism. The consensus paradigm for twigs simply states that any branch contributor can push submits to the twig and merging into a twig requires all contributors to agree (See Subsection \ref{ssc:twigs}). For proper branches the local consensus takes on a different form. It is divided into proof of review (See Subsection \ref{ssc:por}), broadcasting (See Subsection \ref{ssc:broadcasting}) and lignification (See Subsection \ref{ssc:lignification}).
+% Comparison to the blockchain case
 
 
-
-\subsubsection{Proof of Review (PoR)}
-\label{ssc:por}
-
-Before a branch can be merged into a proper branch it needs to undergo a review. We describe this process keeping to the notation of \textit{belt} as the branch that seeks to be merged and \textit{core} as the target of the merge (see Subsection \ref{ssc:branch} for the terms core and belt).
-
-To start the review process an \textit{issuing branch} creates a pull request from a \textit{requesting branch} to a \textit{target branch}. The pull request is a submit with two properties: First it contains a new context data bucket, called the \textit{review bucket}, that will hold all the forthcoming information of the review. It may of course contain other buckets besides that. Second, it leaves a trace of the information about the pull request in the pullRequests entry of the \textit{submitTrace}, namely pointers to the review bucket, to the target branch and the requesting branch. In most cases the issuing branch and the requesting branch are identical. However, the requesting branch may also act as a proxy requester. This is the case when a proper branch seeks to be merged into a target branch. Since this intention would itself have to pass through the consensus rule, one would have to create a feature branch, i.e. a twig, and include therein the proxy pull request. Once that feature gets included into the proper branch by passing  the consensus, the review process can begin on the proper branch. We call a pull request \textit{mature} when it is included in the requesting branch. In the most common scenario where the issuing and requesting branch coincide maturity is immediate. 
-% In the ensuing merging process the requesting branch becomes the belt and the target branch becomes the core.}
-Once a pull request becomes mature a message will be send to the target branch  its contributors are invited to review the requesting branch. The message is simply a reference to the pull request sent to the pullRequests channel of the target's branch requests (see Subsection \ref{ssc:mempool}).
-Any content contributor of the target branch can then become a review contributor of the requesting branch. They must publish a review commitment on the requesting branch. This makes them official contributors to that branch. It also helps to gauge general reviewers engangement for prior to the actual review. This is helpful both for those who seek to merge and those who seek to review. It also increases accountability of the committing reviewer. Failing to supply a review after a commitment could be penalized via the social engagement (see Subsection \ref{ssc:socialrefs}).  
-Committers publish their commitment in the reviewsTrace of the submitTrace. The cannot submit reviews without that commitment and the cannot submit the commitment if they have are (also) content contributors of the requesting branch. 
-¸
-Once a pull request has been opened, which happens with the inclusion of the submit into the prospective belt part of the merge.
-
-
-
-How about merging branches that do not seek to be merged into this branch. In that case there is at least one contributor of this who seeks to merge that branch. So this contributor creates a twig, merges that branch into the twig and creates a pull request to this branch.
-
-
-
-
-\subsubsection{Lignification}
-\label{ssc:lignification}
-
-
-
-
-\subsubsection{Contributors}
-\label{ssc:contributors}
 
 \subsubsection{Branch Config Changes}
 
-\subsubsection{Branch Type Changes}
+% \subsubsection{Branch Type Changes}
 
 \subsubsection{Branch Operations}
 \label{ssc:branchops}
