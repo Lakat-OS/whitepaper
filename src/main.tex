@@ -5,6 +5,8 @@
 \usepackage{graphicx}
 % \usepackage{wrapfig}
 \usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{array}
 \hypersetup{
     colorlinks=true,
@@ -220,9 +222,9 @@ Branch contributors form the basis of the consensus mechanism. We entrench this 
 
 The local consensus paradigm is governing amendments to branches, both to twigs and to proper branches. Sprouts on the other hand are just auxiliary objects that cannot be modified directly and are thus not amenable to a consensus mechanism. The consensus paradigm for twigs simply states that any branch contributor can push submits to the twig whereas merging into a twig requires a certain fraction of contributors to agree (See Subsection \ref{ssc:twigs} for twigs and Subsection \ref{ssc:twiglocalconsensus} for consensus on twigs). For proper branches the local consensus takes on a different form. It is divided into proof of review (See Subsection \ref{ssc:por}), broadcasting and lignification (See Subsection \ref{ssc:lignification}).
 
-\subsubsection{Local Consensus of Feature Branches}\label{ssc:twiglocalconsensus}
+\subsubsection{Feature Branches}\label{ssc:twiglocalconsensus}
 
-Twigs are meant to be used rather quick iteration. They behave like feature branches. Here is an example where twigs are expected to be used: If an individual or an AI would like to add content to a target branch, say an article or some modifications or both, it creates a feature branch rooted in the target branch which subsequently goes through the proof of review consensus mechanism (see Subsection \ref{ssc:por}). Typically the number of content contributors on a twig will be low. Maybe a single author or a small group of authors at it is the case for article publications. In order to not compromise the momentum and the quick iteration both content contributors and review contributors (if there are any) can push to the branch directly. Merges can also be pushed, but require a fraction of approvals of the content contributors. The fraction is determined in the config of the twig. 
+Twigs are meant to be used for rather quick iteration. They behave like feature branches. Here is an example where twigs are expected to be used: If a contributor, human or AI, would like to add content to a target branch, say an article or some modifications or both, it creates a feature branch rooted in the target branch which subsequently goes through the proof of review consensus mechanism (see Subsection \ref{ssc:por}). Typically the number of content contributors on a twig will be low. Maybe a single author or a small group of authors, as it is the case for article publications. In order to not compromise the momentum and the quick iteration both content contributors and review contributors (if there are any) can push to the branch directly. Merges can also be pushed, but require a fraction of approvals of the content contributors. The fraction is determined in the config of the twig. 
 
 \subsubsection{Proof of Review (PoR)}
 \label{ssc:por}
@@ -232,13 +234,13 @@ Before a branch can be merged into a proper branch it needs to undergo a review.
 To start the review process an \textit{issuing branch} creates a pull request from a \textit{requesting branch} to a \textit{target branch}. The pull request is a submit with two properties: First it contains a newly created context data bucket, called the \textit{review container}, that will hold all the forthcoming information of the review. It may of course contain other buckets besides that. Second, it leaves a trace of the information about the pull request in the pullRequests entry of the \textit{submitTrace}, namely pointers to the review container, to the target branch and the requesting branch. In most cases the review happens on a twig, which acts as a feature branch. There the issuing branch and the requesting branch are identical, because the twig requests for itself to be pulled into the target branch. However, the requesting branch may also act as a proxy requester. This is the case when a proper branch rather than a twig seeks to be merged into a target branch. Since this intention itself must pass through the consensus rule of that proper branch, one would have to create a twig and include therein the proxy pull request. Once that twig is successfully merged into the actual requesting branch by passing the consensus, the review process can begin on that proper branch for it be mergeable into the target branch. We call a pull request \textit{mature} once it is included in the requesting branch. In the most common scenario where the issuing and requesting branch coincide maturity is immediate. 
 % In the ensuing merging process the requesting branch becomes the belt and the target branch becomes the core.}
 Once a pull request becomes mature a message will be send to the target branch  where its contributors are invited to review the requesting branch. The message is simply a reference to the pull request sent to the pullRequests channel of the target's \textit{branchRequests} (see Subsection \ref{ssc:mempool} for branch requests).
-Any content contributor of the target branch who is not also contributing to the requesting branch can then become a \textit{review contributor} of the requesting branch. They must publish a review commitment on the requesting branch. This makes them official contributors to that branch. It also helps to gauge general reviewers engangement prior to the actual review. This is helpful both for those who seek to merge and those who seek to review. It also increases accountability of the committing reviewer. Failing to supply a review after a commitment could be penalized via the social engagement (see Subsection \ref{ssc:socialrefs}).  
-Committers publish their commitment in the reviewsTrace of the submitTrace. They cannot submit reviews without that commitment. 
+Any content contributor of the target branch who is not also contributing to the requesting branch can then become a \textit{review contributor} of the requesting branch. They must first publish a review commitment on the requesting branch. This makes them official contributors to that branch. It also helps to gauge general reviewers engangement prior to the actual review. This is helpful both for those who seek to merge and those who seek to review. It also increases accountability of the committing reviewer. Failing to supply a review after a commitment could be penalized via the social engagement (see Subsection \ref{ssc:socialrefs}).  
+Committers publish their commitment in the reviewsTrace of the submitTrace. They cannot submit reviews without a prior commitment. Also, the identity of the reviewer is not public in the sense that the commitment solely contains a zero-knowledge proof that the reviewer is a contributer to the target branch (see Subsection \ref{ssc:proofofcontributions}).
+Of course the reviewer may decide to reveal their identity and this may or may not be in line with the configuration of the target branch.
 
+Reviewers then push review submits to the requesting branch. The submits just contain a proof of contributorship in the target branch. A review submit consists of the following: A bucket with a review, called a \textit{review item}. This bucket should reference all the data buckets that it has reviewed. In the respective interaction data (see Subsection \ref{ssc:branch}) of all those reviewed buckets a reference to the review item is stored within the reviews entry. Finally the review item gets referenced in the review container of the pull request. Updating the review bucket, as with any bucket update, consists of creating a new review bucket that points to the old one through the parent entry\footnote{In future versions of Lakat we wish to move to updates via deltas.}. The branchConfig of the target branch specifies the pre-requisites for a merge. This consists of the minimum number of reviewers, a rule for acceptance and a minimum number of review rounds, which could be one by default. The rule of acceptance could be preset aswell. For instance one could reject requests when a certain fraction of reviewers reject and accept when there are no rejections and specify some rule for the middle ground. Once all the requirements of the target branch are satisfied the branch is ready to be merged. 
 
-Reviewers then push review submits to the requesting branch. A review submit consists of the following: A bucket with a review, called a \textit{review item}. This bucket should reference all the data buckets that it has reviewed. In the respective interaction data (see Subsection \ref{ssc:branch}) of all those reviewed buckets a reference to the review item is stored within the reviews entry. Finally the review item gets referenced in the review container of the pull request. Updating the review bucket, as with any bucket update, consists of creating a new review bucket that points to the old one through the parent entry\footnote{In future versions of Lakat we wish to move to updates via deltas.}. The branchConfig of the target branch specifies the pre-requisites for a merge. This consists of the minimum number of reviewers, a rule for acceptance and a minimum number of review rounds, which could be one by default. The rule of acceptance could be preset aswell. For instance one could reject requests when a certain fraction of reviewers reject and accept when there are no rejections and specify some rule for the middle ground. Once all the requirements of the target branch are satisfied the branch is ready to be merged. 
-
-How about merging branches that do not seek to be merged? This can be the case when trying to merge the newest developments from a remote branch. This case is in fact already covered by the respective consensus mechanisms of twigs and proper branches. Merging into twigs requires a fraction of content contributors to agree (see Subsection \ref{ssc:twiglocalconsensus}). Merging into proper branches requires a pull request and subsequent reviews, so it is not possible to just merge other branches in the same way that one merges reviewed twigs. Therefore, one would have to create a twig that merges the remote branch as a feature. It then requests to be merged und the merge undergoes a review.
+How about merging branches that do not seek to be merged? This can be the case when trying to merge the newest developments from a remote branch. This case is in fact already covered by the respective consensus mechanisms of twigs and proper branches. Merging into twigs requires a fraction of content contributors to agree (see Subsection \ref{ssc:twiglocalconsensus}). Merging into proper branches requires a pull request and subsequent reviews, so it is not possible to just merge other un-reviewed branches in the same way that one merges reviewed twigs or reviewed proper branches. Therefore, one would have to create a twig that merges the remote branch as a feature. It then requests to be merged und the merge undergoes a review.
 
 
 
@@ -259,16 +261,80 @@ How about merging branches that do not seek to be merged? This can be the case w
 \subsubsection{Broadcasting and Lignification}
 \label{ssc:lignification}
 
-How is the multitude of reviewed pull requests bundled up and sequenced into a single proper branch and why is the process important and how is the required attention bandwidth kept to a minimum? In order to explain the Lakat answer to this question we first contrast it to the case of blockchains: There transactions are bundled into blocks. They are then broadcasted across the network of nodes. When different blocks  with the same parent are broadcasted, there will be several conflicting versions of the blockchain state. In ethererum prior to the transition from the proof-of-work to the proof-of-stake these alternative versions were called ommers and mostly the result of latency in the broadcasting, but of course also attacks or client issues. To make sure that a transaction has irrevocably been added into the blockchain one would have to wait for a few blocks. 
+How are the reviewed pull requests bundled up and sequenced into a single proper branch? Why is the process important. How is the attention bandwidth that is required for this proess kept to a minimum? In order to explain the Lakat answer to this question we first contrast it to the case of blockchains: There transactions are bundled into blocks. They are then broadcasted across the network of nodes. When different blocks  with the same parent are broadcasted, there will be several conflicting versions of the blockchain state. In ethererum prior to the transition from the proof-of-work to the proof-of-stake these alternative versions were called ommers and mostly the result of latency in the broadcasting, but of course also attacks or client issues. To make sure that a transaction has irrevocably been added into the blockchain one would have to wait for a few blocks. 
 
 In Lakat we solve the issue through a process that we call \textit{lignification}. The idea is that amongst the potentially plentiful and conflicting versions of the new branch state eventually a new head will be chosen. This head is then called the stable head. The versions are stored as short-lived branches, called sprouts, and pointed to in the \textit{sprouts} entry of the branch. Why is the process of choosing a successor to the stable head important? The branch is an object that is kept alive by an ecosystem of contributors. It could get hijacked by a group of bad actors who became branch contributors through a mal-reviewed pull-request. Though in principle, if this happened, the contributors that disagreed with this malicious onboarding could bail out by creating a new branch. However, this new branch would have to grow the reputation of its contributors anew, seek new storage providers, have a new branch token and would generally have to start from scratch. It might not even be an attack, but a disagreement in the community that leads to a branching.
-Even though this process constitutes an important security measure for the branch, it should not create an overload of attention demanded from the branch contributors. In most cases there will be no action required. But it is precisely those rare case where such a security measure becomes valuable. So one of the requirements for this process is that the branch production continues unambiguously when there is no interference from the community of contributors. In the following we introduce the process of broadcasting and lignification in more detail.
+Even though the process of finding a new stable head constitutes an important security measure for the branch, it should not create an overload of attention demanded from the target branch contributors. In most cases there will be no action required. But it is precisely those rare case where such a security measure becomes valuable. So one of the requirements for this process is that the branch production continues unambiguously when there is no interference from the community of contributors. In the following we introduce the process of broadcasting and lignification in more detail.
 
 
-Every proposed new merge submit could either make it into the stable head or become the first submit of a new branch rooted in the proper branch. Since any submit carries in itself the possibility of becoming a new branch, each merge submit is actually wrapped into a short-lived proto-branche, namely a sprout whose head is that proposed submit. Once the submit is in either of those categories it cannot be revoked. We say it is lignified. The conversion of a previously flexible object into a rigid amendment of a branch has similarities to the process of lignification in botany. 
-The category is not decided immediately, but there is a period of time where the decision can still be revoked and deferred. This time is called \textit{lignification time}. If there is only one choice for a successor submit to the stable head then the decision on the successor is clearly that one. However, there may be multiple options. We propose to have a deterministic rule that singles out a submit in the case of several options and we propose the possibility of a veto to this default deterministic choice. This minimizes the need to vote each time multiple options arise, but more importantly it reduces the attack vector for people to bring branch growth to a halt by proposing alternate -- yet still reviewed -- merge submits. Vetoing is possible throughout the lignification time. Any of the rivaling submits may register a veto, though for the deterministically chosen default submit this veto has no consequence. Once a veto is registered the submit still has a chance to become the next stable head. \remark{how does that work in practice and where is the veto registered and every proposal of new merge submits can also advance the state of the stable head ...} Content contributors can bring in their votes on the rivaling submits. After a period of time, called the \textit{engagement time}, the winning submit becomes the new stable head and the other submits turn into their own branches \remark{probably proper, right}. If the child submit of the winning submit is older than the time for vetoing and does not have rivaling submits, i.e. is not being voted on, then it in turn becomes the stable head. The same for its child and so forth until either a submit is reached that is still within the vetoing time or there are no more children. The successive replacement of the stable head along the children of the successful submit is done in one transaction. So at the end of the transaction the head may have progressed by more than one submit.
+Every proposed new merge submit could either make it into the stable head or become the first submit of a new (disagreeing) branch that is rooted in the proper branch. Since any submit carries in itself the possibility of becoming a new branch, each merge submit is actually wrapped into a short-lived proto-branch, namely a sprout whose head is that proposed submit. Once the submit is in either of those categories it cannot be revoked. We say it is lignified. The conversion of a previously flexible object into a rigid amendment of a branch has similarities to the process of lignification in botany. 
+The category is not decided immediately, but there is a period of time where the decision can still be revoked and deferred. This time is called \textit{lignification time}. If there is only one choice for a successor submit to the stable head then the decision on the successor is clearly that one and requires no action. However, there may be multiple options. We propose to have a deterministic rule that singles out a submit in the case of several options and we propose the possibility of vetoing the default deterministic choice. This minimizes the need to vote each time multiple options arise, but more importantly it reduces the attack vector for people to bring branch growth to a halt by proposing alternate -- yet still reviewed -- merge submits. Vetoing is possible throughout the lignification time. Any branch contributor may register a veto to any of the vying submits, though for the deterministically chosen default submit this veto has no consequence. In case that a veto is registered the submit once more has a chance to become the next stable head. \remark{how does that work in practice and where is the veto registered and every proposal of new merge submits can also advance the state of the stable head ...} Content contributors can bring in their votes on the rivaling submits. After a period of time, called the \textit{engagement time}, the winning submit becomes the new stable head and the other submits turn into their own branches \remark{probably proper, right}. Due to the elapsed engagement time child submits could and quite possibly do already point to the new stable head.  Then the following is checked within the same transaction for each subsequent child submit until the routine exits: 
+
+First, is the child submit older than the time allowed for vetoing? If not, then exit. Else, check whether it has rivalling submits. If it doesn't, then turn it into the new stable head and continue. If it does and no veto has been registered then make it the new stable head only if it is the default option and continue. If it does and a veto has been registered check whether the engagement time has also passed for this submit. If not, then exit. If yes, then  turn it into the new stable head if it is the default option and continue
+
+This routine unrolls the new branch state with the new stable head, all within one transaction.
+
+there is a veto attached to it or   there is one child If the child submit of the winning submit is older than the time for vetoing and does not have rivaling submits, i.e. is not being voted on, then it in turn becomes the stable head. The same for its child and so forth until either a submit is reached that is still within the vetoing time or there are no more children. The successive replacement of the stable head along the children of the successful submit is done in one transaction. So at the end of the transaction the head may have progressed by more than one submit.
 Before the successor of a stable head is fixed and after the end of engagement, such as vetoing or voting, there is a buffer time called \textit{broadcasting buffer} that allows for vetos or votes to be broadcasted across the network.
 
+\begin{algorithm}
+\caption{Lignification -- Advancing the stable head of the branch}
+\begin{algorithmic} 
+\STATE checkChildSprouts $\leftarrow$ TRUE
+\WHILE{checkChildSprouts}
+\STATE sprouts $\leftarrow$ childSproutsOf(targetBranch::stableHead)
+\IF{sprouts is empty}
+\STATE checkChildSprouts $\leftarrow$ FALSE
+\ELSE
+\IF {all sprouts are within veto time (plus \textit{broadcastingBuffer})}
+\STATE checkChildSprouts $\leftarrow$ FALSE
+\ELSE
+\IF {the default successor sprout has no vetoing sibling sprouts}
+\STATE targetBranch::stableHead $\leftarrow$ defaultSprout::stableHead
+\FOR {\textit{sproutPtr} in sibling sprouts and their child sprouts}
+\STATE prune \textit{sproutPtr} from targetBranch::sprouts and targetBranch::sproutSelection
+\ENDFOR
+% \STATE prune sprout from targetBranch::sprouts and targetBranch::sproutSelection
+% \FOREND
+\STATE checkChildSprouts $\leftarrow$ TRUE
+\ELSE
+\STATE /* one ore more siblings have vetoed */
+\IF {voting has finished, i.e. engagementTime is over}
+\STATE targetBranch::stableHead $\leftarrow$ winningSprout::stableHead
+\FOR {\textit{sproutPtr} in sibling sprouts and their child sprouts}
+\STATE prune \textit{sproutPtr} from targetBranch::sprouts and targetBranch::sproutSelection
+\ENDFOR
+\STATE checkChildSprouts $\leftarrow$ TRUE
+\ELSE
+\STATE checkChildSprouts $\leftarrow$ FALSE
+\ENDIF
+\ENDIF
+\ENDIF
+\ENDIF
+% \STATE $X \leftarrow 1 / x$
+% \STATE $N \leftarrow -n$
+% \ELSE
+% \STATE $X \leftarrow x$
+% \STATE $N \leftarrow n$
+% \ENDIF
+% \WHILE{$N \neq 0$}
+% \IF{$N$ is even}
+% \STATE $X \leftarrow X \times X$
+% \STATE $N \leftarrow N / 2$
+% \ELSE[$N$ is odd]
+% \STATE $y \leftarrow y \times X$
+% \STATE $N \leftarrow N - 1$
+% \ENDIF
+\ENDWHILE
+% \FOR {$sproutPtr$ in $branch::sprouts$}
+% \STATE $sprout \leftarrow $ sproutAt($sproutPtr$) 
+% \IF {timestamp($sprout$) $\leq$ timestamp($stableHead$)}
+% \STATE del $sproutPtr$ from $branch::sprouts$
+% \ENDIF
+% \ENDFOR
+\RETURN
+\end{algorithmic}
+\end{algorithm}
 
 
 In a first step any branch contributor can take one or several of the reviewed 
@@ -300,6 +366,12 @@ This is done by appending them to the chain of submits that this contributor thi
 
 \subsubsection{Branch Operations}
 \label{ssc:branchops}
+
+Merge, 
+
+creation, 
+
+
 
 Creating a new branch does not require any consensus. One may broadcast it to some other branches, but there is no way for anyone to impede a branch creation. 
 
