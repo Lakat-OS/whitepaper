@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 % \usepackage{wrapfig}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{array}
@@ -134,6 +135,9 @@ We also not that there are various levels at which Lakat can be viewed as a grap
 Submits bundle up changes to the data with some additional metadata. Every submit points to a previous submit, the \textit{parent} submit. There exist \textit{singularity} submits that have no parent. The parent entry of those submits is zero. Like in git or ethereum, there is a field reserved for submit-specific data that we call \textit{submitMessage}. The change of the data within the submit is subsumed in \textit{trieRoot}, which is the root of the \textit{DataMPTrie}, a Merkle-Patricia-Trie that references the data state of Lakat (see Section \ref{ssc:datatrie}). The leafs of the trie are the data buckets. They have some resemblance with accounts in the ethereum state trie. Usually only a small part of the entire trie gets updated in a submit. Imagine the trie being all of wikipedia and a submit being just the creation of a new page or even just editing a page. Event though the bucket identifier is immutable it points to mutable entries. This is similar to ethereum, where the leave nodes are immutable account addresses that point to mutable entries like amount of ETH, the contract storage data or the account nonce. The mutable entries in the case of Lakat are made up of information that is attached by other users to the bucket. It is information that is not intrinsic to the bucket. This includes \textit{socialRefs}, \textit{reviews}, \textit{tokens}, \textit{bucketRefs} and \textit{storageProofs}. 
 
 The socialRefs resolve to tokens of appreciation, such as thumbs up or down -- the gold standard of social media user interaction. The reviews point to data buckets that contain a review or comments on the bucket in question. The tokens entry allow for the integration of tokens to data buckets. The bucketRefs are two collections of references to other buckets. The first collection is immutable and contains all those other buckets that are referenced inside the bucket data. This second collection is mutable and consists of all those molecular buckets that the atomic bucket is part of. This is a reverse registry that can be understood as how much a content has been reused. There is no analogue in classical publishing. StorageProofs are a ledger of timestamped proofs of storage for the bucket.  
+
+There are some submits with a specific structure. These are the \textit{pull requests} (see Subsection \ref{ssc:por}) and the merge submits (see Subsection \ref{ssc:branchops}). The pull request  contains at least one context bucket, called the \textit{review container}, that references all the subsequent reviews. It also leaves a trace of the pull request in the submitTrace. The merge submit contains 
+all the data buckets of the peri branch and it points to the merged branch id in the submitTrace. 
 
 
 \subsubsection{Data--Trie}
@@ -360,6 +364,7 @@ In practice the broadcasting and lignification can be automated by a script so t
 
 
 \subsubsection{Branch Config Changes}
+\label{ssc:configchange}
 
 % \subsubsection{Branch Type Changes}
 
@@ -367,27 +372,26 @@ In practice the broadcasting and lignification can be automated by a script so t
 \label{ssc:branchops}
 
 
-The first branch operation is the creation. There are \textit{genesis creations} and \textit{rooted creations}. As the name suggest the genesis creation is a branch that does not have ancestorial submits. This is similar to blockchains or git, which have a block or submit without a parent. However unlike those Lakat allows for multiple genesis creations. Anyone can at any time create a new genesis branch, which is either a twig or a proper branch. A genesis creation requires the creator to set the branch config. Optionally the creator may also specify a branch token.
+\paragraph{Creation.} The first branch operation is the creation. There are \textit{genesis creations} and \textit{rooted creations}. As the name suggest the genesis creation is a branch that does not have ancestorial submits. This is similar to blockchains or git, which have a block or submit without a parent. However unlike those Lakat allows for multiple genesis creations. Anyone can at any time create a new genesis branch, which is either a twig or a proper branch. A genesis creation requires the creator to set the branch config. Optionally the creator may also specify a branch token.
 
-On the other hand a rooted creation is a branch creation whose initial submit has a parent submit. There are two ways that rooted creations come about. One possibility is that a creator starts a new branch and chooses a parent submit as a root. Anyone may do that for any root branch at any time. The config can then either be chosen anew or inherited. Another possibility involves an ousted sprout, namely one that has been attempting to provide the next stable head in a lignification process. If that ousted sprout receives another submit, it turns into a proper branch. This branch is rooted in the branch for which it was a sprout. It inherits the branch config, but not the token and the branch contributors are the creator of the sprout and the content contributors of the branch that has been attempted to be merged. Any of those contributors can create submits to that ousted sprout and with that submit it turns into a proper branch where the parent entry is set during that conversion. Thus this mechanism for a rooted branch creation is indirect and only possible for the respective content contributors.
+On the other hand a rooted creation is a branch creation whose initial submit has a parent submit. There are two ways that rooted creations come about. One possibility is that a creator starts a new branch and chooses a parent submit as a root. Anyone may do that for any root branch at any time. The config can then either be chosen anew or inherited. Another possibility involves an ousted sprout, namely one that has been attempting to provide the next stable head in a lignification process. If that ousted sprout receives another submit, it turns into a proper branch. This branch is rooted in the branch for which it was a sprout. It inherits the branch config, but not the token and the branch contributors are the creator of the sprout and the content contributors of the branch that has been attempted to be merged. Any of those contributors can create submits to that ousted sprout and with that submit it turns into a proper branch where the parent entry is set during that conversion. Thus this mechanism for a rooted branch creation is indirect and can only be executed by the respective content contributors.
 
-At branch creation 
+\paragraph{Merge.} In Lakat a merge is the inclusion of changes from one branch into another. There is a strict directionality in a Lakat-merge. Git distinguishes between this and other and inn Lakat this corresponds to core and peri, where core is the pulling branch. Merging into a proper branch can only occur after a pull-request (see Proof-of-review in Subsection \ref{ssc:por}). Twigs on the other hand can pull other branches using an approval of a fraction of its content contributors. The fraction is specified in the branch config. After a merge the peri branch may become stale. A stale branch cannot receive submits. Whether a branch becomes stale after a merge depends on the branch config (see Subsection \ref{ssc:configchange}).
+A merge requires a merge submit (see Subsection \ref{ssc:submit}). In order to discuss which data buckets are included in the merge submit we briefly introduce the set theoretic slang of $A$ \textit{minus} $B$ for the set of elements in $A$ that are not in $B$. The set of elements that are in $A$ and $B$ is called \textit{intersection} of $A$ and $B$ and the set of elements that are in $A$ or $B$ is called the \textit{union} of $A$ and $B$. The respective notations are $A-B$, $A\cap B$ and $A\cup B$. We denote the set of submits of a branch $\mathfrak B$ by $\mathcal S_{\mathfrak B}$. We denote the set of data buckets in the data root of a submit $s$ by $\mathcal{B}_s$. Thus the set of data buckets in a branch $\mathfrak B$ with stable head $head(\mathfrak B)$ is $\mathcal{B}_{head(\mathfrak B)}$. 
 
-
-Merge, 
-
-creation, 
+There may be data buckets in core $\mathfrak C$ that are not in peri $\mathfrak P$ and there sure are data buckets in peri that are not in core, i.e. $\mathcal S_{\mathfrak P}-\mathcal S_{\mathfrak C}\neq \emptyset$ is not empty. Even if peri has no submit in common with core, i.e. $\mathcal S_{\mathfrak P}\cap\mathcal S_{\mathfrak C}= \emptyset$, both branches may have some buckets in their intersection. The only way this can happen in Lakat is if core and peri have pulled from the same branch or from branches that share a submit. Why is this so? This is a consequence of the way that Lakat handles merges. If a merge would include all the submits of the  
 
 
+If a merge would include 
 
-Creating a new branch does not require any consensus. One may broadcast it to some other branches, but there is no way for anyone to impede a branch creation. 
+This is a consequence of the way a merge
+
+The merge submit contains all the buckets of the pulled branch. 
+
+If the merge follows a pull-request all the content contributors of the requesting branch become also content contributors of the pulling branch.
+
 
 password recovery.  ... upon contribution you receive a share
-
-
-How many contributors should agree for a submit and how many rounds of reviews for a merge. All those are inside the branchConfig.
-The presets are themselves buckets. Like whether the amount of agreement for a staged submit to be included in terms of score. 
-
 
 
 
