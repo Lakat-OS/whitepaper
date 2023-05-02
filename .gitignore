@@ -6,5 +6,6 @@
 *.bbl
 *.blg
 *.log
+*.dvi
 src/*.pdf
 *synctex.gz
