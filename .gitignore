@@ -7,5 +7,7 @@
 *.blg
 *.log
 *.dvi
+*.tmp
+*.bak
 src/*.pdf
 *synctex.gz
