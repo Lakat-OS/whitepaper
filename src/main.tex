@@ -24,7 +24,9 @@
 
 \newcommand{\remark}[1]{{\color{purple} (#1)}}
 
-\title{\sc{Lakat}\break \sc{A Publishing Architecture}}
+\title{\sc{Lakat}\break \sc{A pluralistic base layer for 
+% continuous integration 
+academic publishing}}
 \author{Leonhard Horstmeyer \\
 \remark{Do not distribute}}
 \date{\today}
@@ -70,12 +72,36 @@ Our starting point is a set of eight core requirements, that we posit for a publ
 
 % Science and publishing of scientific output appears to be going through a crisis. 
 % ... interoperable. research papers are little blobs. 
-The research paper as the gold standard of publisicing research output poses several threats to the overall scientific endeavour. We mention six issues associated with the paper-formatted research output. \remark{Use quotes and citations where possible}. First of all the format incentivizes the creator(s) of scientific output to withhold preliminary results or results that are either not significant or at odds with a hypothesis. If there are significant results, they may not meet the eye or mind of other creators or consumers of scientific output until the entire paper has been published. Especially if there are significant and important results, it may then even take of the order of tens of months for the paper-formatted research output to be accessible. Thus the process of building on top of previous work and of critical engagement is hindered and in the best case deferred.
-Second, paper-formatted publications incentivize their creators to wrap minor changes into the costume of an entire research paper reusing a possibly templated introduction over and over again. Third, the paper is but a polished snapshot of a process. It is an inorganic blob "data structure". The process of reaching a result or of not reaching it as well as the review process are generally not part of the output and not naturally representable in the rigid paper-format. The process often doesn't stop with the paper-publication, but continues thereafter and it requires awkward hacks in the form of corrections or second versions to account for changes. Fourth, the paper format creates rigid and isolated islands of content, where there might be conflicting or agreeing intersections. Papers address these intersections with citations that are often placed in an unspecific context, and often reference an entire paper or body of work rather than a particular part. These intersections between different scientific outputs are not only constrained to citations, but entire paragraphs such as introduction or method sections are often simply replicated from previous papers. Thus, making conflicting or agreeing intersections a manifest part of the data structure can overcome the hacky fixes and shortcommings of the paper-format.
-Fifth, the question of who contributed how much to a research output is often a source of conflict among researchers. A process-oriented publication system facilitates the tracking of contributions and may reduce the cases of unjust allocation of contributorship. In paper-formatted publications the contributorship is proxied by a negotiated ordered list of co-authors, which cannot capture contributions and inevitably leads to unjust allocations. 
-Sixth, the effective barring of potential contributors in paper-formatted research does not increase the level of scrutiny, creativity and quality of the output. On the contrary, maybe another set of eyes can add insights or expand on the results. Why should the self-declared co-authors be in the best position to conduct the research? The fear for the theft of ideas is mostly inherent to bulk-publications and less to process-based research output. The research paper is a relict from the past where the channels for communicating results had a huge latency. Apart from the abovementioned problems with paper-formatted research, Lakat may also be instrumental in other familiar problems with scientific publishing. For instance, with respect to the exploitation of scientists regarding their review services and production. Even though Lakat does not address this directly, it does provide a base layer to build a system of incentives on top of the proof-of-review concept.
+The research paper as the gold standard of publisicing research output poses several threats to the overall scientific endeavour. It is a relict from the times where the printing press had been the latest innovation and where the channels for communicating had a large latency.  We mention six issues associated with the paper-formatted research output that are addressed by Lakat:
+\begin{itemize}
+
+ \item It incentivizes the creator(s) of scientific output to withhold preliminary results or results that are either not significant or at odds with a hypothesis. If there are significant results, they may not meet the eye or mind of other creators or consumers of scientific output until the entire paper has been published. Especially if there are significant and important results, it may then even take of the order of tens of months for the paper-formatted research output to be accessible. Thus the process of building on top of previous work and of critical engagement is hindered and in the best case deferred.
+ 
+\item It incentivize creator(s) to wrap minor changes into the costume of an entire research paper reusing a possibly templated introduction over and over again. 
+
+\item It is but a polished snapshot of a process, an inorganic blob "data structure". The process of reaching a result or of not reaching it as well as the review process are generally not part of the output and not naturally representable in the rigid paper-format. The process often doesn't stop with the paper-publication, but continues thereafter and it requires awkward hacks in the form of corrections or second versions to account for changes.
+
+\item It creates rigid and isolated islands of content, where conflicting or agreeing intersections are likely present. Papers address these intersections with citations that are often placed in an unspecific context, and often reference an entire paper or body of work rather than a particular part. These intersections between different scientific outputs are not only constrained to citations, but entire paragraphs such as introduction or method sections are often simply replicated from previous papers. Thus, making conflicting or agreeing intersections a manifest part of the data structure can overcome the hacky fixes and shortcommings of the paper-format.
+
+\item 
+The question of who contributed how much to a research output is often a source of conflict among researchers. A process-oriented publication system facilitates the tracking of contributions and may reduce the cases of unjust allocation of contributorship. In paper-formatted publications the contributorship is proxied by a negotiated ordered list of co-authors, which cannot capture contributions and inevitably leads to unjust allocations. 
+
+\item The effective barring of potential contributors in paper-formatted research does not increase the level of scrutiny, creativity and quality of the output. On the contrary, maybe another set of eyes can add insights or expand on the results. Why should the self-declared co-authors be in the best position to conduct the research? The fear for the theft of ideas is mostly inherent to bulk-publications and less to process-based research output. 
+\end{itemize}
+
+Apart from the abovementioned problems with paper-formatted research, Lakat may also be instrumental in other familiar problems with scientific publishing. For instance, with respect to the exploitation of scientists regarding their review services and production. Even though Lakat does not address this directly, it does provide a base layer to build a system of incentives on top of the proof-of-review concept.
+
+In 2006 the platform Scholarpedia \cite{}\remark{find source} was launched. It is a wiki-based format with a peer review layer. One of the drawback is the need to be affiliated with an institution to be allowed to contribute. The authors of an article are either chosen or elected. This to our mind has two drawbacks. First it raises the question who elects those that elect. Second, the collaborative dimension of wikipedia is lost. In 2007 the Citizendium fork of the english wikipedia launched 
+
+In contrast Lakat is permissionless. No one is barred from editing or from proposing pull requests to change content. 
+
+and also collaborative nature of developing and changing an article   Permissionless 
+There is no need to be affiliated to an institute.
+
 
 % 
+There are various solutions that have been proposed to improve the process of science publishing with respect to transparency, review, ownership, decentralization, collaboration, openness or fairness. We exhibit proposed solutions and their benefits or shortcomings. 
+
 % 
 % Follow this line of thought. Why is wikipedia suitable for research publications and why is it unsuitable? First of all it is suitable because it provides a collaborative platform for real-time development on topics of research interest. It is unsuitable because there is no assessment of quality form experts. and if one would add it, who would be the expert to decide?
 % 
@@ -84,7 +110,7 @@ Sixth, the effective barring of potential contributors in paper-formatted resear
 % Which problems does it solve?
 % 
 % Comparison to other solutions. 
-% ``DeSci Labs'', ``Lateral.io'', ``Publishing DAO'', ...
+% ``DeSci Labs'', ``La  teral.io'', ``Publishing DAO'', ...
 DeSci Labs -- 
 
 Lateral.io --
@@ -95,36 +121,40 @@ Publishing DAO
 \cite{boiko2023emergent}
 \cite{schaufelbuhl2019eureka}
 
+ Git-ssb
+ 
+ https://www.sciencedirect.com/science/article/abs/pii/S0167739X2200440X
+
 
 The entire architecture of Lakat is heavily inspired by concepts developed by the Hungarian philosopher Imre Lakatos. Probably in an attempt to contribute to the demarcation problem that was prominent in the field of philosophy of science during Lakatos' times and still these days, he developed the concept of a \textit{research programme}, which is also called \textit{Lakatosian research programme} to avoid confusion with the colloquial use of the former term. The demarcation problem asks about the criteria which tell science apart from "pseudo-science".  Lakatos develops his theory on the grounds of a process-oriented account of science. So rather than saying that this or that monolitic bulk of work or set of statements is or is not scientific, he posits that this distinction can only be made on the grounds of processes of theoretical amendments to an existing corpus of statements. He distinguishes progressive and degenerative amendments depending on whether they strengthen the programme's predictive power. For Lakatos a research programme consists of a \textit{hard core}, which is a set of constituting assumptions, axioms as it were, that capture the essence of a research endeavour and a \textit{protective belt} of auxiliary hypotheses. The key ideas that the Lakat-architecture takes from the concept of the Lakatosian research programmes are threefold: 1) The pluralism of various research undertakings. 2) The process-orientation 3) The distinction between a core and a protective belt. At the heart of these foundational concepts lies the idea that science lives through arguments, differences and discourse. The input of Lakatosian concepts into Lakat can then be described as follows. A research programme corresponds to a branch or a set of branches to which researchers contribute changes or ammendments. There is no single master branch, but rather every research programme has its own branch or set of branches. Conflicts with other branches or even within the same branch are an important aspect of Lakat and can be the source of progress (c.f. progressive ammendments in Lakatosian research programmes). A programme can maintain a set of branches amongst which there are many side or feature branches that support the core branch. These side branches behave like a protective belt.  
-
-
-\section{Requirements}
-
-In this section we provide a list of high-level requirements that we wish to be satisfied by a publication system. We then consider three existing publishing systems in view of those requirements:
-
-\indent \textbf{1. Open} -- 
- Content and code base\footnote{Here we refer to the code base of any client implementation.} should be accessible freely\footnote{Internet service providers are not free. So we refer here to additional charges.}.\\
-\indent\textbf{2. Permissionless} --
- No one should be barred from contributing.\\
-\indent\textbf{3. Pluralistic} -- No monopoly on research opinion.\footnote{This is not not necessarily the same as ``No single source of truth''.}\\
-\indent\textbf{4. Process-oriented} -- Putting the curation on par with the content.\\
-\indent\textbf{5. Conflict-oriented} -- Making irreconcilabilities manifest.\\
-\indent\textbf{6. Curatable} -- Putting the curation on par with the content.\\
-\indent\textbf{7. Sustainable} -- 
- Data and compute resources should be low and reuse of fragments encouraged.\\
-%  \item \textbf{soft constraints}
-\indent\textbf{8. AI friendly} -- AI should be able to interact with the system.\\
-
-The classical route to publishing is through sending a manuscript to the editors of a peer reviewed journal. The editor(s) then search(es) for reviewers willing to review the manuscript. Is this open? In most cases the article as well as the review, the code base and the data -- if there is any --  are locked behind pay walls, i.e. not accessible publicly. Some journals have various open access options, that allow the abovementioned parts of the publication to be accessible, albeit at a high price for the author both in terms of money and in terms of transferral of rights to the publisher. In principle the system is permissionless, except for those cases where publication fees apply and/or membership in a recognised institution is required. This system is not particularly monopolous, at least prima facie. The de facto sovereignty over what is an exceptable contribution rests with the editor(s) of the journals, but given enough funding new journals can form. The process of the research as well as the review are not well mapped in this system. There is no focus and in particular no build-in focus on resolution of conflicting results. Curation is left to the editors. 
-
-Wikipedia\footnote{Here we refer not only to the software implementation, which at the time of writing is version 1.39 of mediawiki, publicly accessible via wikipedia.org (April 2023), but also the body of editors and maintainers.} is an open database. Both its code-base as well as its content can be viewed with access to a non-censored internet connection. A large part of the database can be edited permissionlessly, even without an account. Every article has one current version, often with a rich history of older versions and vivid discussions around edits. At times fierce editing battles can be observed and have been subjected to scientific studies \cite{dedeo}. 
-The possibility to express different views on a matter in the form of versions as well as the discussion adds a pluralistic element, even though the existence of a single current truth in the form of the latest version of an article deducts from that. the multilingual featuer on the other hand makes wikipedia more pluralistic. 
-
-Programmable blockchain is an open database. Is is often referred to as bein permissionless and that is true for most blockchains in the sense that no third party controls read or write access to it.
-
-
- Making a manifestly pluralist system not only prevents the dictatorship of one academic credo over another, but also allows for conflicting opinions to develope and hopefully to resolve.
+% 
+% 
+% \section{Requirements}
+% 
+% In this section we provide a list of high-level requirements that we wish to be satisfied by a publication system. We then consider three existing publishing systems in view of those requirements:
+% 
+% \indent \textbf{1. Open} -- 
+%  Content and code base\footnote{Here we refer to the code base of any client implementation.} should be accessible freely\footnote{Internet service providers are not free. So we refer here to additional charges.}.\\
+% \indent\textbf{2. Permissionless} --
+%  No one should be barred from contributing.\\
+% \indent\textbf{3. Pluralistic} -- No monopoly on research opinion.\footnote{This is not not necessarily the same as ``No single source of truth''.}\\
+% \indent\textbf{4. Process-oriented} -- Putting the curation on par with the content.\\
+% \indent\textbf{5. Conflict-oriented} -- Making irreconcilabilities manifest.\\
+% \indent\textbf{6. Curatable} -- Putting the curation on par with the content.\\
+% \indent\textbf{7. Sustainable} -- 
+%  Data and compute resources should be low and reuse of fragments encouraged.\\
+% %  \item \textbf{soft constraints}
+% \indent\textbf{8. AI friendly} -- AI should be able to interact with the system.\\
+% 
+% The classical route to publishing is through sending a manuscript to the editors of a peer reviewed journal. The editor(s) then search(es) for reviewers willing to review the manuscript. Is this open? In most cases the article as well as the review, the code base and the data -- if there is any --  are locked behind pay walls, i.e. not accessible publicly. Some journals have various open access options, that allow the abovementioned parts of the publication to be accessible, albeit at a high price for the author both in terms of money and in terms of transferral of rights to the publisher. In principle the system is permissionless, except for those cases where publication fees apply and/or membership in a recognised institution is required. This system is not particularly monopolous, at least prima facie. The de facto sovereignty over what is an exceptable contribution rests with the editor(s) of the journals, but given enough funding new journals can form. The process of the research as well as the review are not well mapped in this system. There is no focus and in particular no build-in focus on resolution of conflicting results. Curation is left to the editors. 
+% 
+% Wikipedia\footnote{Here we refer not only to the software implementation, which at the time of writing is version 1.39 of mediawiki, publicly accessible via wikipedia.org (April 2023), but also the body of editors and maintainers.} is an open database. Both its code-base as well as its content can be viewed with access to a non-censored internet connection. A large part of the database can be edited permissionlessly, even without an account. Every article has one current version, often with a rich history of older versions and vivid discussions around edits. At times fierce editing battles can be observed and have been subjected to scientific studies \cite{dedeo}. 
+% The possibility to express different views on a matter in the form of versions as well as the discussion adds a pluralistic element, even though the existence of a single current truth in the form of the latest version of an article deducts from that. the multilingual featuer on the other hand makes wikipedia more pluralistic. 
+% 
+% Programmable blockchain is an open database. Is is often referred to as bein permissionless and that is true for most blockchains in the sense that no third party controls read or write access to it.
+% 
+% 
+%  Making a manifestly pluralist system not only prevents the dictatorship of one academic credo over another, but also allows for conflicting opinions to develope and hopefully to resolve.
  
 
 \section{Elements of the Publishing System}
@@ -163,7 +193,7 @@ Every bucket contains six entries: A \textit{schema}, a \textit{creatorRoot}, a 
  \caption{A schematic illustration of the branch object and its entries.}
  \label{fig:branchstructure}
 \end{figure}
-The central object type of Lakat is the \textit{branch}. See Figure \ref{fig:branchstructure} for an illustration. Branches represent journals or research communities. They share some properties with \textit{git}-branches and some with blockchains. Every branch contains an id, called \textit{branchID}, that uniquely identifies it. The immutable entries of a branch and the initial head are hashed to produce the branch identifier. The branch also points to a parent branch from which it was branched off. This entry may however be empty for a certain type of branch, namely the sprout (see below). The corresponding entry is called \textit{parentBranch}. This construction turns the set of branches into a linked data structure.\footnote{\remark{Maybe check this} In \textit{git} a branch is simply pointer to the head commit. In blockchains one often encounters ids attached to the chain (so-called \textit{chainid}) to avoid issues when the consensus mechanism yields two differnt chains.} At creation time the branch receives a \textit{timestamp}. The previous entries are all immutable. There are then four mutable entries, namely \textit{stableHead}, then the two consensus entries \textit{sprouts} and \textit{sproutSelection} and finally \textit{branchToken}. The stable head is a pointer to the latest stable submit. A \textit{submit} is a set of changes (see Subsection \ref{ssc:submit} on submits). One may think of it as the Lakat version of an article submission. It has similiarities to a commit in git -- not only phonetically -- but also to a block in \textit{ethereum}. The addition of new submits works through a consensus mechanism called \textit{proof of review (PoR)} and \textit{lignification} (see Subsection \ref{ssc:consensus}). Also in this respect the branch behaves a lot like a blockchain. Every branch has it's own token, the \textit{branchToken}. It allows funding bodies to fund a particular branch. Token logic is not handled by \textit{Lakat}. Instead this entry essentially points to proofs of transactions on a blockchain where the respective token lives. The purpose of the integration of tokens is to create an incentive layer on top of Lakat, because (unfortunately) \textit{humans} as well as \textit{AI} do not work without incentives. The branch also carries configurational metadata, stored in \textit{branchConfig}. It points to information about the branch type, whether merge conflicts are accepted, the consensus rules and the proofs that are accepted, such as proofs of token transfer or proofs of time. The branchConfig's mutability is more constrained than that of the stable head (See Subsection \ref{ssc:configupdate}).
+The central object type of Lakat is the \textit{branch}. See Figure \ref{fig:branchstructure} for an illustration. Branches represent journals or research communities. They share some properties with \textit{git}-branches and some with blockchains. Every branch contains an id, called \textit{branchID}, that uniquely identifies it. The immutable entries of a branch and the initial head are hashed to produce the branch identifier. The branch also points to a parent branch from which it was branched off. This entry may however be empty for a certain type of branch, namely the sprout (see below). The corresponding entry is called \textit{parentBranch}. This construction turns the set of branches into a linked data structure.\footnote{\remark{Maybe check this} In \textit{git} a branch is simply pointer to the head commit. In blockchains one often encounters ids attached to the chain (so-called \textit{chainid}) to avoid issues when the consensus mechanism yields two differnt chains.} At creation time the branch receives a \textit{timestamp}. The previous entries are all immutable. There are then four mutable entries, namely \textit{stableHead}, then the two consensus entries \textit{sprouts} and \textit{sproutSelection} and finally \textit{branchToken}. The stable head is a pointer to the latest stable submit. A \textit{submit} is a set of changes (see Subsection \ref{ssc:submit} on submits). One may think of it as the Lakat version of an article submission. It has similiarities to a commit in git -- not only phonetically -- but also to a block in \textit{ethereum}. The addition of new submits works through a consensus mechanism called \textit{proof of review (PoR)} and \textit{lignification} (see Subsection \ref{ssc:consensus}). Also in this respect the branch behaves a lot like a blockchain. Every branch has it's own token, the \textit{branchToken}. It allows funding bodies to fund a particular branch. Token logic is not handled by \textit{Lakat}. Instead this entry essentially points to proofs of transactions on a blockchain where the respective token lives. The purpose of the integration of tokens is to create an incentive layer on top of Lakat, because (unfortunately) \textit{humans} as well as \textit{AI} do not work without incentives. The branch also carries configurational metadata, stored in \textit{branchConfig}. It points to information about the branch type, whether merge conflicts are accepted (see Subsection \ref{ssc:submit}), the consensus rules and the proofs that are accepted, such as proofs of token transfer or proofs of time. The branchConfig's mutability is more constrained than that of the stable head (See Subsection \ref{ssc:configchange}).
 
 
 There are three types of branches: \textit{proper branches}, \textit{sprouts} and \textit{twigs}. The branch type is stored in the branch config and can be changed under certain conditions. 
@@ -182,7 +212,12 @@ Submits bundle up changes to the data with some additional metadata. Every submi
 The socialRefs resolve to tokens of appreciation, such as thumbs up or down -- the gold standard of social media user interaction. The reviews point to data buckets that contain a review or comments on the bucket in question. The tokens entry allow for the integration of tokens to data buckets. The bucketRefs are two collections of references to other buckets. The first collection is immutable and contains all those other buckets that are referenced inside the bucket data. This second collection is mutable and consists of all those molecular buckets that the atomic bucket is part of. This is a reverse registry that can be understood as how much a content has been reused. There is no analogue in classical publishing. StorageProofs are a ledger of timestamped proofs of storage for the bucket.  
 
 There are some submits with a specific structure. These are the \textit{pull requests} (see Subsection \ref{ssc:por}) and the merge submits (see Subsection \ref{ssc:branchops}). The pull request  contains at least one context bucket, called the \textit{review container}, that references all the subsequent reviews. It also leaves a trace of the pull request in the submitTrace. The merge submit contains 
-all the data buckets of the peri branch and it points to the merged branch id in the submitTrace. 
+all the data buckets of the belt branch and it points to the merged branch id in the submitTrace. 
+
+In Lakat conflicts are at the heart of the protocol. They are cherished as the source of progress and sets Lakat apart from conventional publishing systems. We provide a clear definition of a conflict. A \textit{submit conflict} with respect to a branch $\mathfrak B$ is a set 
+of three submits $\pi$, $s_1$ and $s_2$ where $\pi$ is the parent of both $s_1$ and $s_2$ and all three are included in $\mathfrak B$. We denote this 4-tupel by $(\mathfrak B, \pi, s_1, s_2)$.
+A submit that creates a submit conflict is called a \textit{conflicted submit} and a submit that does not create a submit conflict is called \textit{conflictless submit}.
+A \textit{merge conflict} is a submit conflict that arises from a merge submit. Depending on the branch configuration (see Subsection \ref{ssc:branch}) merge submits may or may not bring about merge conflicts. 
 
 
 \subsubsection{Data--Trie}
@@ -411,6 +446,10 @@ In practice the broadcasting and lignification can be automated by a script so t
 \subsubsection{Branch Config Changes}
 \label{ssc:configchange}
 
+The branch config contains configurable  metadata such as the branch type, a flag that can be set to allow only conflictless submits (see Subsection \ref{ssc:submit}), then the accepted proofs (e.g. proofs of storage, proofs of contributorship,  proofs of token transfer) and finally the parameters that determine the consensus (e.g. the number of reviewers needed in the proof of review algorithm). These entries have constrained mutability. They require a merge rather than a plain commit to take effect. For a twig this means that the consensus mechanism for a twig needs to met, i.e. a config-specific fraction of contributors need to approve the merge. For a proper branch this means that the config change needs to go through the proof-of-review (PoR) consensus mechanism (see Subsection \ref{ssc:por}). 
+
+
+
 % \subsubsection{Branch Type Changes}
 
 \subsubsection{Branch Operations}
@@ -420,13 +459,13 @@ In practice the broadcasting and lignification can be automated by a script so t
 \paragraph{Creation.} The first branch operation is the creation. There are \textit{genesis creations} and \textit{rooted creations}. As the name suggest the genesis creation is a branch that does not have ancestorial submits. This is similar to blockchains or git, which have a block or submit without a parent. However unlike those Lakat allows for multiple genesis creations. Anyone can at any time create a new genesis branch, which is either a twig or a proper branch. A genesis creation requires the creator to set the branch config. Optionally the creator may also specify a branch token. 
 On the other hand a rooted creation is a branch creation whose initial submit has a parent submit. There are two ways that rooted creations come about. One possibility is that a creator starts a new branch and chooses a parent submit as a root. Anyone may do that for any root branch at any time. The config can then either be chosen anew or inherited. Another possibility involves an ousted sprout, namely one that has been attempting to provide the next stable head in a lignification process. If that ousted sprout receives another submit, it turns into a proper branch. This branch is rooted in the branch for which it was a sprout. It inherits the branch config, but not the token and the branch contributors are the creator of the sprout and the content contributors of the branch that has been attempted to be merged. Any of those contributors can create submits to that ousted sprout and with that submit it turns into a proper branch where the parent entry is set during that conversion. Thus this mechanism for a rooted branch creation is indirect and can only be executed by the respective content contributors.
 
-\paragraph{Merge.} In Lakat a merge is the inclusion of changes from one branch into another. There is a strict directionality in a Lakat-merge. Git distinguishes between this and other and inn Lakat this corresponds to core and peri, where core is the pulling branch. Merging into a proper branch can only occur after a pull-request (see Proof-of-review in Subsection \ref{ssc:por}). Twigs on the other hand can pull other branches using an approval of a fraction of its content contributors. The fraction is specified in the branch config. After a merge the peri branch may become stale. A stale branch cannot receive submits. Whether a branch becomes stale after a merge depends on the branch config (see Subsection \ref{ssc:configchange}).
-A merge requires a merge submit (see Subsection \ref{ssc:submit}) and a cryptographic validation of the branch that is merged.
+\paragraph{Merge.} In Lakat a merge is the inclusion of changes from one branch into another. There is a strict directionality in a Lakat-merge. Git distinguishes between this and other and in Lakat this corresponds to core and peri, where core is the pulling branch. Merging into a proper branch can only occur after a pull-request (see Proof-of-Review in Subsection \ref{ssc:por}). Twigs on the other hand can pull other branches using an approval of a fraction of its content contributors. The fraction is specified in the branch config. After a merge the belt branch may become stale. A stale branch cannot receive submits. Whether a branch becomes stale after a merge depends on the branch config (see Subsection \ref{ssc:configchange}).
+A merge requires a merge submit (see Subsection \ref{ssc:submit}) and a cryptographic validation of the branch that is merged. When the conditions for a merge are not met, the merge submit cannot pass the cryptographic validation. For instance if the config of the pulling branch only allows conflictless submits and the belt branch has conflicted submits, then the merge is invalid.
 
 In order to discuss which data buckets are included in the merge submit we briefly introduce the set theoretic slang of $A$ \textit{minus} $B$ for the set of elements in $A$ that are not in $B$. The set of elements that are in $A$ and $B$ is called \textit{intersection} of $A$ and $B$ and the set of elements that are in $A$ or $B$ is called the \textit{union} of $A$ and $B$. The respective notations are $A-B$, $A\cap B$ and $A\cup B$. We denote the set of submits of a branch $\mathfrak B$ by $\mathcal S_{\mathfrak B}$. We denote the set of data buckets in the data root of a submit $s$ by $\mathcal{B}_s$. Thus the set of data buckets in a branch $\mathfrak B$ with stable head $head(\mathfrak B)$ is $\mathcal{B}_{head(\mathfrak B)}$. 
 
-We have already discussed that there is no many-to-one relation between buckets and branches (c.f. Figure \ref{fig:branchbucketrel}). There may be data buckets in core $\mathfrak C$ that are not in peri $\mathfrak P$ and there sure are data buckets in peri that are not in core, i.e. $\mathcal S_{\mathfrak P}-\mathcal S_{\mathfrak C}\neq \emptyset$ is not empty. 
-One question that arises in the context of merges is how to combine disparate bucket sets and how to handle that on the level of submits. There are two possible design choices. Either all the submits of peri become submits of core and consequentially also the buckets in $\mathcal S_{\mathfrak P}-\mathcal S_{\mathfrak C}$. Alternatively they stay submits of peri and the beforementioned buckets are included in the merge-submit's merkle hash of the data trie. In the first scenario one is faced with the problem, that the submits of peri all have immutable timestamps and parents. Rebasing those would require to loosen those immutability conditions. In the latter scenario one needs to point to the submits that whose data was included. It suffices to point to the peri's last submit before the merge. We opt for the second scenario. Unlike the first scenario, the second scenario has the peculiar situation that peri may have data buckets in common with core even though they do not share any submits, i.e. $\mathcal S_{\mathfrak P}\cap\mathcal S_{\mathfrak C}= \emptyset$ yet $\mathcal B_{\mathfrak P}\cap\mathcal B_{\mathfrak C}\neq \emptyset$. The only way this can happen in Lakat is if core and peri have pulled from the same branch or from branches that have a common submit in their histories \footnote{Here we make the distinction between the history of a branch and the set of submits of a branch. A branch may be rooted in another branch, but its history can go beyond the root.}. 
+We have already discussed that there is no many-to-one relation between buckets and branches (c.f. Figure \ref{fig:branchbucketrel}). There may be data buckets in core $\mathfrak C$ that are not in belt $\mathfrak P$ and there sure are data buckets in belt that are not in core, i.e. $\mathcal S_{\mathfrak P}-\mathcal S_{\mathfrak C}\neq \emptyset$ is not empty. 
+One question that arises in the context of merges is how to combine disparate bucket sets and how to handle that on the level of submits. There are two possible design choices. Either all the submits of belt become submits of core and consequentially also the buckets in $\mathcal S_{\mathfrak P}-\mathcal S_{\mathfrak C}$. Alternatively they stay submits of belt and the beforementioned buckets are included in the merge-submit's merkle hash of the data trie. In the first scenario one is faced with the problem, that the submits of belt all have immutable timestamps and parents. Rebasing those would require to loosen those immutability conditions. In the latter scenario one needs to point to the submits that whose data was included. It suffices to point to the peri's last submit before the merge. We opt for the second scenario. Unlike the first scenario, the second scenario has the peculiar situation that belt may have data buckets in common with core even though they do not share any submits, i.e. $\mathcal S_{\mathfrak P}\cap\mathcal S_{\mathfrak C}= \emptyset$ yet $\mathcal B_{\mathfrak P}\cap\mathcal B_{\mathfrak C}\neq \emptyset$. The only way this can happen in Lakat is if core and belt have pulled from the same branch or from branches that have a common submit in their histories \footnote{Here we make the distinction between the history of a branch and the set of submits of a branch. A branch may be rooted in another branch, but its history can go beyond the root.}. 
 
 % 
 % If a merge would include 
@@ -442,9 +481,21 @@ One question that arises in the context of merges is how to combine disparate bu
 
 
 
-\section{User Flows}
+\section{Technical Specifications, Integrations and User Flow}
 
-Traditional flow also possible
+One of the objectives of Lakat is to transition academic publishing from a paper-formatted system to a cryptographically secure, collaborative and pluralistic system that allows for the continuous integration of research output. In order to achieve this objective, we believe that a transition should be as seemless as possible. The publishing system with isolated paper-formatted publications and intransparent review processes is an edge case of Lakat, an unsustainable and hacky one yet sufficient for onramping. We describe in which sense this is the case and how a transition could be achieved.
+
+We can imagine a scenario for Lakat with a set of isolated branches. Each branch is controlled by a single legal entity, namely an academic journal. The academic journal is the content contributor, the storage contributor and the token contributor all in one. When a hypothetical researcher, say Alice (AI or human), wants to publish a paper, she has to send it to the journal. The branch that the journal  controls is simply the indexed collection of articles that have been submitted, respectively chained together cryptographically. For a journal to transition its containt to such a branch state is simple. Each paper is stored on a journal-controlled server, thus making the journal the sole storage provider. By adding the submissoin to the journal branch, the journal becomse the sole content contributor and retains all the rights of the contribution. The contribution is no longer owned by Alice at all. In this hypothetical oligarchic aboration \remark{check name} of Lakat, a contribution is a submit with a single data bucket containing the paper. In summary, there is a way to map the classical publishing system into Lakat. Why is this unsustainable?  Given the design of Lakat, this branch would quite naturally undergo diversification through forking. At some point a researcher may quite create a branch routed in that journal branch, which is but a click. Maybe the incentive structure provided by the journal is soo strong that authors are willing to transfer all the rights to the journal voluntarily, but given Lakat's inherent ease of branching it will be a matter of time until there is a diversification.
+
+\subsection{Interfaces with existing protocols}
+
+We envision Lakat as a base layer for a pluralistic, collaborative publication system that progresses through continuous integration. As a base layer we strive to rely only on a bare minimum of other software and aim to have interface with for existing software or protocols. Here we provide an overview of the so-called tech-stack and the interfaces. 
+
+We would like to interface with mediawiki. Mediawiki is an evolving database schema with a php frontend that allows for the creation of knowledge databases such as wikipedia. There are various ways how Lakat could interface with mediawiki. The weakest form requires the conversion of the data contributions in Lakat to database entries in mediawiki. A stronger form converts also contributions to mediawiki into Lakat contributions.
+
+\subsection{User Flow}
+Here we describe a hypothetical user flow. 
+
 
 \section{Attack Vectors}
 
