@@ -23,6 +23,7 @@
 \usepackage[left=2.15cm, right=2.15cm, bottom=1.55cm, top=0.75cm]{geometry}
 
 \newcommand{\remark}[1]{{\color{purple} (#1)}}
+\newcommand{\comment}[1]{{\color{black!50!green} #1}}
 
 \title{\sc{Lakat}\break \sc{An open pluralistic base layer for 
 % continuous integration 
@@ -283,9 +284,7 @@ The main idea behind the concept of contributors is derived from the mutability,
 
 
 
-A contribution is any type of interaction with the branch. There are four types of contributions: \textit{submit}, \textit{review}, \textit{token} and \textit{storage}. A submit is a contribution that adds data to the branch. A review submit is a contribution that adds a review to a branch. A token submit is a contribution that adds a proof of a token creation, token mint or token transfer to the branch. A storage contribution is a proof about the storage of data pointed contained in the branch, i.e. pointed at by submits of the branch. A contribution is always associated with a branch and a contributor. 
-
-In the first minimal viable version of Lakat, we are planning to use STARKs \cite{} as proof system. This is due to the fact that STARKs do not require a trusted setup. We use Cairo programmes to generate proofs and point to their verification. The proof of contribution is a hash of the zero-knowledge proof of the contribution and its verification.
+A contribution is any type of interaction with the branch. There are four types of contributions: \textit{submit}, \textit{review}, \textit{token} and \textit{storage}. A submit is a contribution that adds data to the branch. A review submit is a contribution that adds a review to a branch. A token submit is a contribution that adds a proof of a token creation, token mint or token transfer to the branch. A storage contribution is a proof about the storage of data pointed contained in the branch, i.e. pointed at by submits of the branch. A contribution is always associated with a branch and a contributor. In the first minimal viable version of Lakat, we are planning to use STARKs \cite{} as proof system. This is due to the fact that STARKs do not require a trusted setup. We use Cairo programmes to generate proofs and point to their verification. The proof of contribution is a hash of the zero-knowledge proof of the contribution and its verification.
 
 
 \section{Local Consensus}
@@ -364,63 +363,46 @@ In practice the broadcasting and lignification can be automated by a script so t
 \begin{algorithm}[h!]
 \caption{Lignification -- Advancing the stable head of the branch}
 \begin{algorithmic} 
-\REQUIRE targetBranch, mergeSubmit, broadcastingBuffer, lignificationTime, engagementTime 
-\STATE downstreamBranches $\leftarrow$ orderedList of branches downstream of targetBranch
-\FOR {i in 1 ... downstreamBranches.length - 1)  /* indexing starts at 1*/}
+\REQUIRE coreBranch, mergeSubmit, broadcastingBuffer, lignificationTime, engagementTime 
+\STATE downstreamBranches $\leftarrow$ branches downstream of coreBranch: [coreBranch, ..., sproutOf(mergeSubmit)]
+\STATE referenceBranch $\leftarrow$ coreBranch \comment{/* referenceBranch may later be core or peri(pheral) branch */}
+\FOR {i in 1 ... (downstreamBranches.length - 1)  \comment{/* indexing starts at 1 */}}
   \STATE currentBranch $\leftarrow$ downstreamBranches[i]
-  \STATE childSprout  $\leftarrow$ downstreamBranches[i + 1]  /* always exists */
+  \STATE childSprout  $\leftarrow$ downstreamBranches[i + 1]  \comment{/* always exists */}
   \IF {all currentBranch.sprouts are within lignificationTime time (plus broadcastingBuffer)}
     \RETURN
   \ELSE
-    \IF {defaultSuccessor(currentBranch) equals childSprout}
-      \IF {defaultSuccessor(currentBranch) has no vetoing siblings}
-        \STATE set the stableHead, sproutSelection and sprouts of targetBranch to those of childSprout
-      \ELSE
-        % \STATE /* one ore more siblings have vetoed */
-        \IF {voting has finished, i.e. engagementTime is over (plus lignificationTime plus broadcastingBuffer)}
-          \IF {childSprout has most votes in currentSprout.sproutSelection}
-            \STATE set the stableHead, sproutSelection and sprouts of targetBranch to those of childSprout
-          \ELSE
-            \STATE /* cannot make modifications for branches that are not downstream of the mergeSubmit */
-            \RETURN
-          \ENDIF
-        \ELSE 
-          % \STATE /* voting has not finished yet */
-          \RETURN
-        \ENDIF
+    \IF {There is a veto against defaultSuccessor(currentBranch) and voting has finished}
+      \STATE \comment{/* engagementTime is over (plus lignificationTime plus broadcastingBuffer) */}
+      \IF {childSprout does not win the vote}
+        \STATE \comment{/* doesn't participate (not defaultSuccessor or not part of a veto) or participates and doesn't win */}
+        \STATE childSprout becomes a peripheral branch rooted in referenceBranch.
+        \STATE referenceBranch $\leftarrow$ childSprout.
+      \ELSE 
+        \STATE \comment{/* childSprout wins the vote */}
+        \STATE set the stableHead, sproutSelection and sprouts of referenceBranch to those of childSprout
       \ENDIF
-    \ELSE
-      \STATE /* current branch is not the default successor */
-      \IF {defaultSuccessor(currentBranch) has no vetoing siblings}
-        \STATE /* cannot make modifications for branches that are not downstream of the mergeSubmit */
-        \RETURN
+      \STATE \comment{/* childSprout may or may not be defaultSuccessor. Both cases are covered. */}
+    \ELSIF {There is a veto against defaultSuccessor(currentBranch), but voting has not finished}
+      \RETURN
+    \ELSE 
+      \STATE \comment{/* There is no veto against defaultSuccessor(currentBranch) */}
+      \IF {childSprout is defaultSuccessor(currentBranch)}
+        \STATE set the stableHead, sproutSelection and sprouts of referenceBranch to those of childSprout
       \ELSE
-        % \STATE /* one or more siblings have vetoed */
-        \IF {there are vetos registered for childSprout in currentBranch.sproutSelection}
-          \IF {voting has finished, i.e. engagementTime is over (plus \textit{broadcastingBuffer})}
-            \IF {childSprout has most votes in currentSprout.sproutSelection}
-              \STATE set the stableHead, sproutSelection and sprouts of targetBranch to those of childSprout
-            \ELSE
-              \STATE /* cannot make modifications for branches that are not downstream of the mergeSubmit */
-              \RETURN
-            \ENDIF
-          \ELSE 
-            % \STATE /* voting has not finished yet */
-            \RETURN
-          \ENDIF
-        \ELSE
-          \STATE /* no vetos registered for childSprout in currentBranch.sproutSelection */
-          % \STATE /* nothing that concerns branches that are downstream of the mergeSubmit */
-          \RETURN
-        \ENDIF
+        \STATE childSprout becomes a peripheral branch rooted in referenceBranch.
+        \STATE referenceBranch $\leftarrow$ childSprout.
       \ENDIF
     \ENDIF
+    \STATE \comment{/* Note that the referenceBranch may have changed. */}
   \ENDIF
 \ENDFOR
 \RETURN
 \end{algorithmic}
 \label{alg:lignification}
 \end{algorithm}
+
+
 
 
 \begin{figure}[h!]
@@ -481,16 +463,18 @@ One of the objectives of Lakat is to transition academic publishing from a paper
 We can imagine a scenario for Lakat with a set of isolated branches. Each branch is controlled by a single legal entity, namely an academic journal. The academic journal is the content contributor, the storage contributor and the token contributor all in one. When a hypothetical researcher, say Alice (AI or human), wants to publish a paper, she has to send it to the journal. The branch that the journal  controls is simply the indexed collection of articles that have been submitted, respectively chained together cryptographically. For a journal to transition its content to such a branch state is anywhere between immediate -- by pointing the head of the branch to the storage locations of all content -- or a matter of running a script that creates a submit for each accepted article retrospectively.  Each paper is stored on a journal-controlled server, thus making the journal the sole storage provider. By adding the submissoin to the journal branch, the journal becomse the sole content contributor and retains all the rights of the contribution. The contribution is no longer owned by Alice at all. In this hypothetical oligarchic abberation of Lakat, a contribution is a submit with a single data bucket containing the paper. In summary, there is a way to map the classical publishing system into Lakat. Depending on the openness and licensing it might be difficult to either access or modify the content, but at least there is an entry point for the conversion.
 Why is this unsustainable?  Given the design of Lakat, this branch would quite naturally undergo diversification through forking. At some point a researcher may create a branch routed in that journal branch, which is but a click. Maybe the incentive structure provided by the journal is soo strong that authors are willing to transfer all the rights to the journal voluntarily, but given Lakat's inherent ease of branching it will be a matter of time until there a diversification is to be expected.
 
-\section{Interfaces with existing software}
+\section{Interfaces with existing solutions}
 
-We envision Lakat as a base layer for an open, pluralistic and collaborative publication system that progresses through continuous integration. As a base layer we strive to rely only on a bare minimum of other software and aim to have interface with for existing software or protocols. Here we provide an overview of the so-called tech-stack and the interfaces. 
+We envision Lakat as a base layer for an open, pluralistic and collaborative publication system that progresses through continuous integration. As a base layer we strive to rely only on a bare minimum of other software and aim to have interface with for existing software or protocols. Here we provide an overview of the protocols and software that we plan to build upon. 
 
-We would like to interface with mediawiki. Mediawiki is an evolving database schema with a php frontend that allows for the creation of knowledge databases such as wikipedia. There are various ways how Lakat could interface with mediawiki. The weakest form requires the conversion of the data contributions in Lakat to database entries in mediawiki. A stronger form converts also contributions to mediawiki into Lakat contributions.
+We would like to interface with mediawiki. Mediawiki is an evolving database schema with a php frontend that allows for the creation of knowledge databases such as wikipedia. There are various
+ways how Lakat could interface with mediawiki. The weakest form requires the conversion of the data contributions in Lakat to database entries in mediawiki. A stronger form converts also contributions to mediawiki into Lakat contributions. Regarding storage we aim to stay agnostic and leave the storage protocol as a configurable option. As options we consider IPFS, Ceramic (which is built on top of IPFS and anchored in Ethereum) and Urbit (lineDB).Regarding the token layer we aim to be agnostic here as well. Since this is an optional feature it is left to the branch contributors to decide and merge updates on their token transactions into their branch. We do recomment to deploy tokens on Polygon though and plan to integrate this into the pipeline.
 
-indexing
+Finally, regarding version control we would like to reduce the complexity of branch operations to a bare minimum in order to avoid security threats and reliance on other protocols. For the local consensus mechanism we believe that a heavily reduced set of operations is favourable. Nevertheless we would like to interface with existing version control systems such as git or radicle. We would like to interface with git or radicle in order to allow for the conversion of git or radicle repositories into Lakat branches. 
 
-\section{User Flow}
-Here we describe a hypothetical user flow. 
+
+
+% We consider the following options: Ethereum, Urbit, Holochain, IOTA, Avalanche, Cardano, Polkadot, Cosmos, Solana, Algorand, Tezos, NEM, EOS, Tron, NEO, Stellar, Waves, Hedera, Zilliqa, Qtum, ICON, Lisk, Nano, BitShares, Komodo, Verge, Bytecoin, Siacoin, Steem, Stratis, Ardor, PIVX, Ark, Decred, MaidSafeCoin, Aeternity, Nxt, Metaverse ETP, Horizen, HyperCash, ReddCoin, MonaCoin, Syscoin, Nexus, Enjin Coin, Nebulas, Particl, NavCoin, Groestlcoin, NULS, RChain, GXChain, Nxt, Metaverse ETP, Horizen, HyperCash, ReddCoin, MonaCoin, Syscoin, Nexus, Enjin Coin, Nebulas, Particl, NavCoin, Groestlcoin, NULS, RChain, GXChain, Factom, Zcoin, Veritaseum, Aion, Ark, Komodo, Verge, Bytecoin, Siacoin, Steem, Stratis, Ardor, PIVX, MaidSafeCoin, Aeternity, Nxt, Metaverse ETP, Horizen, HyperCash, ReddCoin, MonaCoin, Syscoin, Nexus, Enjin Coin, Nebulas, Particl, NavCoin, Groestlcoin, NULS, RChain, GXChain, Factom, Zcoin, Veritaseum, Aion, Ark, Komodo, Verge, Bytecoin, Siacoin, Steem, Stratis, Ardor, PIVX, MaidSafeCoin, Aeternity, Nxt, Metaverse ETP, Horizen, HyperCash, ReddCoin, MonaCoin, Syscoin, Nexus, Enjin Coin, Nebulas, Particl, NavCoin, Groestlcoin, NULS, RChain, GXChain, Factom, Zcoin, Veritaseum, Aion, Ark, Komodo, Verge, Bytecoin, Siacoin, Steem, Stratis, Ardor, PIVX, MaidSafeCoin, Aeternity, Nxt, Metaverse ETP, Horizen
 
 
 \section{Attack Vectors}
