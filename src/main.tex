@@ -365,12 +365,11 @@ In practice the broadcasting and lignification can be automated by a script so t
 \caption{Lignification -- Advancing the stable head of the branch}
 \begin{algorithmic} 
 \REQUIRE targetBranch, mergeSubmit, broadcastingBuffer, lignificationTime, engagementTime 
-\STATE downstreamBranches $\leftarrow$ orderedList of branches downstream of (and including) mergeSubmit
-\STATE currentSprout $\leftarrow$ branchOf(mergeSubmit)
+\STATE downstreamBranches $\leftarrow$ orderedList of branches downstream of targetBranch
 \FOR {i in 1 ... downstreamBranches.length - 1)  /* indexing starts at 1*/}
   \STATE currentBranch $\leftarrow$ downstreamBranches[i]
   \STATE childSprout  $\leftarrow$ downstreamBranches[i + 1]  /* always exists */
-  \IF {all currentBranch.sprouts are within veto time (plus \textit{broadcastingBuffer})}
+  \IF {all currentBranch.sprouts are within lignificationTime time (plus broadcastingBuffer)}
     \RETURN
   \ELSE
     \IF {defaultSuccessor(currentBranch) equals childSprout}
@@ -378,7 +377,7 @@ In practice the broadcasting and lignification can be automated by a script so t
         \STATE set the stableHead, sproutSelection and sprouts of targetBranch to those of childSprout
       \ELSE
         % \STATE /* one ore more siblings have vetoed */
-        \IF {voting has finished, i.e. engagementTime is over (plus \textit{broadcastingBuffer})}
+        \IF {voting has finished, i.e. engagementTime is over (plus lignificationTime plus broadcastingBuffer)}
           \IF {childSprout has most votes in currentSprout.sproutSelection}
             \STATE set the stableHead, sproutSelection and sprouts of targetBranch to those of childSprout
           \ELSE
