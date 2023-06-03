@@ -1,0 +1,24 @@
+
+\section{Contributors and Contributions}
+\label{ssc:contributors}
+
+Every branch has \textit{contributors}, or rather contributors have branches. A contributor is an account that can prove to have contributed to a given branch. There are four types of contributors for any given branch: \textit{content contributors}, \textit{review contributors}, \textit{token contributors} and \textit{storage contributors}. A content contributor can prove to have submitted to the branch. A review contributor is someone who can prove to have pushed reviews to the branch (see Subsection \ref{ssc:por} for information on proof of review). A token contributor is someone who can prove to have deposited funds into the branch. A storage contributor is someone who can prove to store data of that branch. Being a contributor means that you have to prove your contribution for the submits from the root submit of the branch till the current stable head.
+How does the set of contributors change during a merge? What is the relation betwen the contributors of two branches before the marege and after? When the belt branch merged into the core following a pull request, then the new set of contributors is simply the union of the two branches (see Subsection \ref{ssc:branch} for the terms core and belt). That holds for all contributor types. When there is no pull request preceding the merge the contributors of this branch are unaltered.
+The main idea behind the concept of contributors is derived from the mutability, governance and autonomy of branches. Branches can only be modified by their contributors. This attempts to preempt attacks on branches.
+
+% 
+% Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who is a creator of content in any of the branch's submits counts as a contributor (See Subsection \ref{ssc:contributor}). 
+
+% 
+% \subsection{Protocol}
+% \label{ssc:protocol}
+% 
+% 
+% The protocol level deals with all those aspects that mutate the data.
+% 
+% 
+% You can only make changes to the branch that you are contributing to. 
+
+
+
+A contribution is any type of interaction with the branch. There are four types of contributions: \textit{submit}, \textit{review}, \textit{token} and \textit{storage}. A submit is a contribution that adds data to the branch. A review submit is a contribution that adds a review to a branch. A token submit is a contribution that adds a proof of a token creation, token mint or token transfer to the branch. A storage contribution is a proof about the storage of data pointed contained in the branch, i.e. pointed at by submits of the branch. A contribution is always associated with a branch and a contributor. In the first minimal viable version of Lakat, we are planning to use STARKs \cite{} as proof system. This is due to the fact that STARKs do not require a trusted setup. We use Cairo programmes to generate proofs and point to their verification. The proof of contribution is a hash of the zero-knowledge proof of the contribution and its verification.
