@@ -374,18 +374,18 @@ In practice the broadcasting and lignification can be automated by a script so t
 \STATE checkChildSprouts $\leftarrow$ FALSE
 \ELSE
 \IF {the default successor sprout has no vetoing sibling sprouts}
-\STATE targetBranch::stableHead $\leftarrow$ defaultSprout::stableHead
-\STATE targetBranch::sproutSelection $\leftarrow$ defaultSprout::sproutSelection
-\STATE prune all sprouts from targetBranch::sprouts that aren't upstream from targetBranch::stableHead.
+\STATE targetBranch.stableHead $\leftarrow$ defaultSprout.stableHead
+\STATE targetBranch.sproutSelection $\leftarrow$ defaultSprout.sproutSelection
+\STATE targetBranch.sprouts $\leftarrow$ defaultSprout.sprouts
 % \STATE prune sprout from targetBranch::sprouts and targetBranch::sproutSelection
 % \FOREND
 \STATE checkChildSprouts $\leftarrow$ TRUE
 \ELSE
 \STATE /* one ore more siblings have vetoed */
 \IF {voting has finished, i.e. engagementTime is over}
-\STATE targetBranch::stableHead $\leftarrow$ winningSprout::stableHead
-\STATE targetBranch::sproutSelection $\leftarrow$ winningSprout::sproutSelection
-\STATE prune all sprouts from targetBranch::sprouts that aren't upstream from targetBranch::stableHead.
+\STATE targetBranch.stableHead $\leftarrow$ winningSprout.stableHead
+\STATE targetBranch.sproutSelection $\leftarrow$ winningSprout.sproutSelection
+\STATE targetBranch.sprouts $\leftarrow$ winningSprout.sprouts
 \STATE checkChildSprouts $\leftarrow$ TRUE
 \ELSE
 \STATE checkChildSprouts $\leftarrow$ FALSE
@@ -396,17 +396,15 @@ In practice the broadcasting and lignification can be automated by a script so t
 \ENDWHILE
 \RETURN
 \end{algorithmic}
-
 \label{alg:lignification}
 \end{algorithm}
-
 
 
 \begin{figure}[h!]
   \begin{center}
     \includegraphics[width=0.79\textwidth]{src/img/LignificationProcessV6.png}
 \end{center}
- \caption{A hypothetical example of a branch lignification for the following example branch parameters:¸ \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$. Updates 1 to 5 are within the veto time. There are two optional further paths. Either no veto is given, which is the path from step 6a to 7a, or a veto is given at the last possible time of $t=201$ ($=t$(contestor) + \textit{lignificationTime}) through the submit \textit{\#413} at Step 6b. Here the contestant is the submit \textit{\#1b0}. In this hypothetical scenario the contributors of the stable branch \textit{\#3c4} vote in favor of the contesting submit. The new stable part of the branch is thus decided in Step 7b.}
+ \caption{A hypothetical example of a branch lignification with \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$. Updates 1 to 5 are within the veto time. Without a veto sprout \textit{\#107} will deliver the next stable head of branch \textit{\#3c4}. This is the scenario 6a. The loosing sprout is \textit{\#558}. The next merge submits to either of them will becomes a new branch rooted in \textit{\#3c4}. The new merge submit \textit{\#c37} points to \textit{\#413} and thereby broadcasts the new proper branch \textit{\#558}.  Then either a there are two optional further paths. Either no veto is given, which is the path from step 6a to 7a, or a veto is given at the last possible time of $t=201$ ($=t$(contestor) + \textit{lignificationTime}) through the submit \textit{\#413} at Step 6b. Here the contestant is the submit \textit{\#1b0}. In this hypothetical scenario the contributors of the stable branch \textit{\#3c4} vote in favor of the contesting submit. The new stable part of the branch is thus decided in Step 7b.}
  \label{fig:bufferbranches}
 \end{figure}
 
