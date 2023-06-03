@@ -42,13 +42,14 @@ academic publishing}}
     This is abstract for real
 \end{abstract}
 
-
+\newpage
 \section{Introduction}
 
 With the vast amount of data structures, of query and storage systems, of versioning and networking tools and of large language models, one may engineer publishing systems by posing certain requirements that give rise to a different and arguably more collaborative, efficient and healthy academic culture. This approach can be contrasted with an incremental adjustment of the existing system, which in many quantitative sciences is called the greedy approach. We propose one such architecture around the available technology that we call \textit{Lakat}.
 %, whilst acknowledging and demarcating it from other proposals. 
 Lakat is a distributed database with a local peer-reviewed concensus layer. The system serves as a continuous integration and continuous development (CI/CD) solution for collaborative research and one may conceptionally think of Lakat as a peer-to-peer  version of wikipedia with a branch structure similar to git and a peer review system.
-Our starting point is a set of eight core requirements, that we posit for a publishing system:\\ 
+Our starting point is a set of eight core requirements, that we posit for a publishing system:\\
+
 \indent \textbf{1. Open} -- 
  Content and code base\footnote{Here we refer to the code base of any client implementation.} should be accessible freely\footnote{Internet service providers are not free. So we refer here to additional charges.}.\\
 \indent\textbf{2. Permissionless} --
@@ -172,6 +173,9 @@ Instead of a folder structure we solve the containment relation through designat
 
 Every bucket contains six entries: A \textit{schema}, a \textit{creatorRoot}, a \textit{parent}, a \textit{dataRoot}, a \textit{refsRoot} and a \textit{timestamp}. See Figure \ref{fig:bucket} for an illustration. Here and henceforth the word root refers to the root of a Merkle tree. We go through the entries in turn. The \textit{schema} contains information about the format of the data. For instance we have already mentioned that the data in the molecular buckets is formatted as an arrangement\footnote{The purposefully vague formulation of an 'arrangement' is due to the intention to keep that format flexible. One may think of this as an ordered list, but one might also consider further directives or clustering of content in a directed hypergraph.}. The \textit{creatorRoot} points to information about the creator of this bucket. Identity on \textit{Lakat} is solved through proofs (see Section \ref{ssc:proofs}). The \textit{parent} is the \textit{content identifier} of the parent bucket. For genesis buckets that would be 0. The \textit{dataRoot} is a content identifier of the data contained in the bucket. In future versions the schema could be absorbed into the dataRoot using the ipld multihash format. This would require a Lakat-specific codec. The \textit{refsRoot} points to all the references made to other buckets within the data. This is necessary, since references to other buckets might be obscured inside the data-encoding. This is an analogue of a list of citations. The \textit{timestamp} records the time of inclusion of the bucket into the branch. It is important to note that we use ethereum block hashes as time stamps in our first version, since the local consensus is too weak to ensure that all participants are truthful to the time otherwise. Anticipating block hash is close to impossible. One cannot change the data inside the bucket. One would have to create a new bucket that points to the original bucket via its parent entry. 
 
+
+
+
 \subsection{Branch}
 \label{ssc:branch}
 
@@ -183,6 +187,7 @@ Every bucket contains six entries: A \textit{schema}, a \textit{creatorRoot}, a 
  \label{fig:branchstructure}
 \end{figure}
 The central object type of Lakat is the \textit{branch}. See Figure \ref{fig:branchstructure} for an illustration. Branches represent journals or research communities. They share some properties with \textit{git}-branches and some with blockchains. Every branch contains an id, called \textit{branchID}, that uniquely identifies it. The immutable entries of a branch and the initial head are hashed to produce the branch identifier. The branch also points to a parent branch from which it was branched off. This entry may however be empty for a certain type of branch, namely the sprout (see below). The corresponding entry is called \textit{parentBranch}. This construction turns the set of branches into a linked data structure.\footnote{\remark{Maybe check this} In \textit{git} a branch is simply pointer to the head commit. In blockchains one often encounters ids attached to the chain (so-called \textit{chainid}) to avoid issues when the consensus mechanism yields two differnt chains.} At creation time the branch receives a \textit{timestamp}. The previous entries are all immutable. There are then four mutable entries, namely \textit{stableHead}, then the two consensus entries \textit{sprouts} and \textit{sproutSelection} and finally \textit{branchToken}. The stable head is a pointer to the latest stable submit. A \textit{submit} is a set of changes (see Subsection \ref{ssc:submit} on submits). One may think of it as the Lakat version of an article submission. It has similiarities to a commit in git -- not only phonetically -- but also to a block in \textit{ethereum}. The addition of new submits works through a consensus mechanism called \textit{proof of review (PoR)} and \textit{lignification} (see Subsection \ref{ssc:consensus}). Also in this respect the branch behaves a lot like a blockchain. Every branch has it's own token, the \textit{branchToken}. It allows funding bodies to fund a particular branch. Token logic is not handled by \textit{Lakat}. Instead this entry essentially points to proofs of transactions on a blockchain where the respective token lives. The purpose of the integration of tokens is to create an incentive layer on top of Lakat, because (unfortunately) \textit{humans} as well as \textit{AI} do not work without incentives. The branch also carries configurational metadata, stored in \textit{branchConfig}. It points to information about the branch type, whether merge conflicts are accepted (see Subsection \ref{ssc:submit}), the consensus rules and the proofs that are accepted, such as proofs of token transfer or proofs of time. We use timestamps from latest blocks on various blockchains as proofs of time (see \cite{gipp2015decentralized} and also  \href{https://opentimestamps.org/}{opentimestamps.org}). The branchConfig's mutability is more constrained than that of the stable head (See Subsection \ref{ssc:configchange}).
+Finally, we envision a way to extend the config schema. This would be done by an additional entry that points to a \textit{schema bucket}, where the schema for the config is defined. An empty entry would signify the use of the default schema.
 
 
 There are three types of branches: \textit{proper branches}, \textit{sprouts} and \textit{twigs}. The branch type is stored in the branch config and can be changed under certain conditions. 
@@ -232,7 +237,9 @@ The data at each node is serialized and hashed using a yet to be specified ipld-
 \label{ssc:storage}
 
 % i
-The data is stored in key-value databases and is content addressed in the sense that the key equals the multihash of the data. Inside the multihash there is information about the storage protocols used. So if one would use, say ipfs, for storage then a certain flag in the multihash would be raised. If also another protocol or system would be used then this would again be seen through the flag in the multihash. To proof that a certain data bucket has been stored, i.e. pinned, that proof is attached to the mutable information of the bucket in the \textit{storageProofs} entry. There are a few more constraints about storage and pinning. It should be encouraged that every data bucket belongs to at least one molecular bucket so that there are no buckets without a context. Thus when a new data bucket is submitted the submission won't be accepted unless it is present in at least one context bucket.
+The data is stored in key-value databases and is content addressed in the sense that the key equals the multihash of the data. We also consider building on top of the Urbit OS using linedb\cite{linedb} as our key-value storage solution. Inside the multihash there is information about the storage protocols used. If one would use ipfs for storage then a certain flag in the multihash would be raised. If also another protocol or system would be used then this would again be seen through the flag in the multihash. To proof that a certain data bucket has been stored, i.e. pinned, that proof is attached to the mutable information of the bucket in the \textit{storageProofs} entry. There are a few more constraints about storage and pinning. It should be encouraged that every data bucket belongs to at least one molecular bucket so that there are no buckets without a context. Thus when a new data bucket is submitted the submission won't be accepted unless it is present in at least one context bucket.
+
+When a new branch is created the data is initially just stored by the branch creator, but broadcasted through the network. Some nodes may pick up the data and store it as well. The branch creator may also choose to pin the data bucket in a certain storage system. Data that is close in the branch data structure is also close in the storage system. This is a very important feature of Lakat. It allows for a very efficient retrieval of data. The storage of data pertaining to a branch can be rewarded in branch tokens. This is not a feature of Lakat, but may be added on top of it to incentivize storage. There may also be a market for storage, where branch creators can buy storage space for their branch data. This is also not a feature of Lakat, but may be added on top of it.
 
 \subsection{Branch--Requests}
 
@@ -255,12 +262,11 @@ Submit requests contain a serialization of the data buckets that are requested t
 \end{figure}
 
 \section{Contributors and Contributions}
-\subsection{Contributors}
 \label{ssc:contributors}
 
 Every branch has \textit{contributors}, or rather contributors have branches. A contributor is an account that can prove to have contributed to a given branch. There are four types of contributors for any given branch: \textit{content contributors}, \textit{review contributors}, \textit{token contributors} and \textit{storage contributors}. A content contributor can prove to have submitted to the branch. A review contributor is someone who can prove to have pushed reviews to the branch (see Subsection \ref{ssc:por} for information on proof of review). A token contributor is someone who can prove to have deposited funds into the branch. A storage contributor is someone who can prove to store data of that branch. Being a contributor means that you have to prove your contribution for the submits from the root submit of the branch till the current stable head.
 How does the set of contributors change during a merge? What is the relation betwen the contributors of two branches before the marege and after? When the belt branch merged into the core following a pull request, then the new set of contributors is simply the union of the two branches (see Subsection \ref{ssc:branch} for the terms core and belt). That holds for all contributor types. When there is no pull request preceding the merge the contributors of this branch are unaltered.
-The main idea behind the concept of contributors is the mutability, governance and autonomy of branches. Branches can only be modified by their contributors. This attempts to preempt attacks on branches.
+The main idea behind the concept of contributors is derived from the mutability, governance and autonomy of branches. Branches can only be modified by their contributors. This attempts to preempt attacks on branches.
 
 % 
 % Every branch has a history of submits and is \textit{rooted} in some parent branch or is itself a \textit{seedling} (See Subsection \ref{ssc:branch} regarding roots and seedlings). In either cases there is a set of contributors to every branch between its root and the current head. Any actor, human or AI, who is a creator of content in any of the branch's submits counts as a contributor (See Subsection \ref{ssc:contributor}). 
@@ -277,12 +283,9 @@ The main idea behind the concept of contributors is the mutability, governance a
 
 
 
-\subsection{Contributions}
-\label{ssc:contributions}
+A contribution is any type of interaction with the branch. There are four types of contributions: \textit{submit}, \textit{review}, \textit{token} and \textit{storage}. A submit is a contribution that adds data to the branch. A review submit is a contribution that adds a review to a branch. A token submit is a contribution that adds a proof of a token creation, token mint or token transfer to the branch. A storage contribution is a proof about the storage of data pointed contained in the branch, i.e. pointed at by submits of the branch. A contribution is always associated with a branch and a contributor. 
 
-
-\subsection{Proof of Contribution}
-\label{ssc:proofofcontributions}
+In the first minimal viable version of Lakat, we are planning to use STARKs \cite{} as proof system. This is due to the fact that STARKs do not require a trusted setup. We use Cairo programmes to generate proofs and point to their verification. The proof of contribution is a hash of the zero-knowledge proof of the contribution and its verification.
 
 
 \section{Local Consensus}
@@ -309,7 +312,7 @@ To start the review process an \textit{issuing branch} creates a pull request fr
 % In the ensuing merging process the requesting branch becomes the belt and the target branch becomes the core.}
 Once a pull request becomes mature a message will be send to the target branch  where its contributors are invited to review the requesting branch. The message is simply a reference to the pull request sent to the pullRequests channel of the target's \textit{branchRequests} (see Subsection \ref{ssc:mempool} for branch requests).
 Any content contributor of the target branch who is not also contributing to the requesting branch can then become a \textit{review contributor} of the requesting branch. They must first publish a review commitment on the requesting branch. This makes them official contributors to that branch. It also helps to gauge general reviewers engangement prior to the actual review. This is helpful both for those who seek to merge and those who seek to review. It also increases accountability of the committing reviewer. Failing to supply a review after a commitment could be penalized via the social engagement (see Subsection \ref{ssc:socialrefs}).  
-Committers publish their commitment in the reviewsTrace of the submitTrace. They cannot submit reviews without a prior commitment. Also, the identity of the reviewer is not public in the sense that the commitment solely contains a zero-knowledge proof that the reviewer is a contributer to the target branch (see Subsection \ref{ssc:proofofcontributions}).
+Committers publish their commitment in the reviewsTrace of the submitTrace. They cannot submit reviews without a prior commitment. Also, the identity of the reviewer is not public in the sense that the commitment solely contains a zero-knowledge proof that the reviewer is a contributer to the target branch (see Subsection \ref{ssc:contributors}).
 Of course the reviewer may decide to reveal their identity and this may or may not be in line with the configuration of the target branch.
 
 Reviewers then push review submits to the requesting branch. The submits just contain a proof of contributorship in the target branch. A review submit consists of the following: A bucket with a review, called a \textit{review item}. This bucket should reference all the data buckets that it has reviewed. In the respective interaction data (see Subsection \ref{ssc:branch}) of all those reviewed buckets a reference to the review item is stored within the reviews entry. Finally the review item gets referenced in the review container of the pull request. Updating the review bucket, as with any bucket update, consists of creating a new review bucket that points to the old one through the parent entry\footnote{In future versions of Lakat we wish to move to updates via deltas.}. The branchConfig of the target branch specifies the pre-requisites for a merge. This consists of the minimum number of reviewers, a rule for acceptance and a minimum number of review rounds, which could be one by default. The rule of acceptance could be preset aswell. For instance one could reject requests when a certain fraction of reviewers reject and accept when there are no rejections and specify some rule for the middle ground. Once all the requirements of the target branch are satisfied the branch is ready to be merged. 
@@ -390,27 +393,7 @@ In practice the broadcasting and lignification can be automated by a script so t
 \ENDIF
 \ENDIF
 \ENDIF
-% \STATE $X \leftarrow 1 / x$
-% \STATE $N \leftarrow -n$
-% \ELSE
-% \STATE $X \leftarrow x$
-% \STATE $N \leftarrow n$
-% \ENDIF
-% \WHILE{$N \neq 0$}
-% \IF{$N$ is even}
-% \STATE $X \leftarrow X \times X$
-% \STATE $N \leftarrow N / 2$
-% \ELSE[$N$ is odd]
-% \STATE $y \leftarrow y \times X$
-% \STATE $N \leftarrow N - 1$
-% \ENDIF
 \ENDWHILE
-% \FOR {$sproutPtr$ in $branch::sprouts$}
-% \STATE $sprout \leftarrow $ sproutAt($sproutPtr$) 
-% \IF {timestamp($sprout$) $\leq$ timestamp($stableHead$)}
-% \STATE del $sproutPtr$ from $branch::sprouts$
-% \ENDIF
-% \ENDFOR
 \RETURN
 \end{algorithmic}
 
@@ -421,9 +404,9 @@ In practice the broadcasting and lignification can be automated by a script so t
 
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=0.79\textwidth]{src/img/LignificationProcessV5.png}
+    \includegraphics[width=0.79\textwidth]{src/img/LignificationProcessV6.png}
 \end{center}
- \caption{A hypothetical example of a branch lignification for the following example branch parameters:¸ \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$. Updates 1 to 5 are within the veto time. There are two optional further paths. Either no veto is given, which is the path from step 6a to 7a, or a veto is given at the last possible time of $t=201$ ($=t$(contestor) + \textit{lignificationTime}) through the submit \textit{\#413} at Step 6b. Here the contestor is the submit \textit{\#1b0}. In this hypothetical scenario the contributors of the stable branch \textit{\#3c4} vote in favor of the contesting submit. The new stable part of the branch is thus decided in Step 7b.}
+ \caption{A hypothetical example of a branch lignification for the following example branch parameters:¸ \textit{broadcastingBuffer} $=1$, \textit{lignificationTime} $=50$ and \textit{engagementTime} $=60$. Updates 1 to 5 are within the veto time. There are two optional further paths. Either no veto is given, which is the path from step 6a to 7a, or a veto is given at the last possible time of $t=201$ ($=t$(contestor) + \textit{lignificationTime}) through the submit \textit{\#413} at Step 6b. Here the contestant is the submit \textit{\#1b0}. In this hypothetical scenario the contributors of the stable branch \textit{\#3c4} vote in favor of the contesting submit. The new stable part of the branch is thus decided in Step 7b.}
  \label{fig:bufferbranches}
 \end{figure}
 
@@ -435,7 +418,7 @@ In practice the broadcasting and lignification can be automated by a script so t
 \subsection{Branch Config Changes}
 \label{ssc:configchange}
 
-The branch config contains configurable  metadata such as the branch type, a flag that can be set to allow only conflictless submits (see Subsection \ref{ssc:submit}), then the accepted proofs (e.g. proofs of storage, proofs of contributorship,  proofs of token transfer) and finally the parameters that determine the consensus (e.g. the number of reviewers needed in the proof of review algorithm). These entries have constrained mutability. They require a merge rather than a plain commit to take effect. For a twig this means that the consensus mechanism for a twig needs to met, i.e. a config-specific fraction of contributors need to approve the merge. For a proper branch this means that the config change needs to go through the proof-of-review (PoR) consensus mechanism (see Subsection \ref{ssc:por}). 
+The branch config contains configurable metadata such as the branch type, a flag that can be set to allow only conflictless submits (see Subsection \ref{ssc:submit}), then the accepted proofs (e.g. proofs of storage, proofs of contributorship,  proofs of token transfer) and also the parameters that determine the consensus (e.g. the number of reviewers needed in the proof of review algorithm). These entries have constrained mutability. They require a merge rather than a plain commit to take effect. For a twig this means that the consensus mechanism for a twig needs to met, i.e. a config-specific fraction of contributors need to approve the merge. For a proper branch this means that the config change needs to go through the proof-of-review (PoR) consensus mechanism (see Subsection \ref{ssc:por}). We envision that in some future release there will be a default schema for the config, but that this schema may be altered through schema buckets to which the schema is pointing.
 
 
 
@@ -490,6 +473,9 @@ Here we describe a hypothetical user flow.
 
 
 \section{Attack Vectors}
+
+\subsection{Sybil Attacks}
+There 
 
 % \remark{schema of the parent needs to be the same.}
 
@@ -828,6 +814,6 @@ Here we describe a hypothetical user flow.
 % \label{sssc:CREATE_ATOM}
 % A new atomic item is created. As arguments it takes the pointer to the context ${}^\star\!ctx$.
 
-\bibliography{lib/aDistributedPublicationSystem}
+\bibliography{src/lib/aDistributedPublicationSystem.bib}
 \bibliographystyle{plain}
 \end{document}
