@@ -1,7 +1,42 @@
 
-\section{Contributors and Contributions}
-\label{ssc:contributors}
+\section{Participants and network client}
+\label{ssc:participantsandnodes}
 
+\subsection{User Identity}
+\label{ssc:accounts}
+
+Should identity play a role in a publishing system? Is there anything in the process of publishing research output that necessitates some sort of identity? Or maybe less intrinsic: Do we require a concept of identity from a publishing system? 
+% We see three reasons why we need a publishing system to integrate a concept of identity.
+Having a notion of identity is a prerequisite for the attachment of rights. One such right could be the permission to publish something in the first place or to access content. Most current publishing systems are permissioned in this way. Other rights could be copy rights, distribution rights, intellectual property rights, ownership rights, etc. All these rights tie in with our current predominant economic paradigm. They are not strictly needed for a publishing system, but \textit{we} require them from a publishing system given our economic context. The collaborative nature and the alteration of co-authorship configurations even poses a challenge for actualizing these rights in the current publishing systems. Given the complex ideation and creation processes -- in particular in a collaborative setting -- one may raise the question whether the (just) allocation of rights is possible at all. A more finegrained resolution of contributorship, as is the case in Lakat, certainly faciliates this allocation and can therefore conjunct the these concepts of rights and contribution possibly in a better than other solutions. However, at a fundamental level the two are not reconcilable. We conclude the paragraph with a note on another legal ramification of identity in publishing content. Identification makes questions of accountability and liability more addressable, too. Criminal content (under some jurisdiction or other) can be connected with a legal entity. 
+
+Are identities a prerequisite for quality assurance of research? One could resort to scripts that check the quality of research content. Which criteria should these scripts meet? Maybe a set of minimal requirements could be agreed upon and could be checked via a script or a language model. However, when it comes to deciding on research quality one may find that scientists evaluate each other differently and that they frequently deride each others output quality. It seems that at least in research a universally agreed upon quality assurance is not and maybe should not be possible. The quality is rather negotiated within and across communities through dialogue, discourse and the scruitny of review. If a global consensus cannot be reached, then at least maybe a local consensus can. We believe that a concept of identity is needed for a local consensus to be attained. Viable concepts of identity for such a consensus are separating the target of the local consensus, namely the research contribution, from the non-target, namely the personal attributes. 
+
+Identities are also a prerequisite for a reputation system. What is the use of reputation? We believe that it serves two purposes. First, as a means of social recognition it serves vanity. Second, it substitutes critical assessment of research output. This is not to say that we as researchers are not critical enough or too lazy, but rather that we must rely on a reputation system due to our limitations in bandwidth to process and critically assess all the research output. 
+
+In Lakat we build the identity concept around the notion of a contributor. A contributor combines two functions. First as a holder and a sovereign controller of a means to proof authorship. Second as a participant in the local consensus mechanism. To achieve these two functions we propose to use an identity management system that ties in with some of the existing decentralized identity schemes and allows for the integration of multiple signing methods. For the first version of Lakat we propose to use 3id as the identity management system. 3id is a W3C compliant decentralized identity management system that allows for the integration of multiple signing methods. It relies on a mutable document type in the ceramic network, called a stream. In the future we would also like to distill identity to the ability to proof authorship rather than the attachment of a public key or a 3id to a contributor. This would further decouple the identity from the underlying identity management system and reduce ad hominem conflations of the identity with the person.
+% what is the use of reputation? It serves two purposes. First, as a means of social recognition it serves vanity. Second as a   
+% - limitations of the human mind to critically assess the quality of all the research output.
+
+% we aim to for a system based on sovereign identities that can be controlled by 
+
+
+
+
+% We can identify three main reasons for this: 
+% - tell bots from humans
+% - prerequisite for the notion of a contributor, which eventually is important for the consensus algorithm.
+% - legal ... rights do like to attach themselves to entities that can be punished. Intellectual property, other tpes of ownership etc. accountability
+% - thereby also a security layer.
+% - allowing the association of content to contributor allows people to form a hopefully self-formed opinion about a contributors work.
+% - unfortunately also ammenable to extrinsic reputation allocation. Lakat however does not have a an intrinsic notion of reputation. However, existing and new reputation systems may be attached.  
+% - what is the use of reputation? It serves two purposes. First, as a means of social recognition it serves vanity. Second as a   
+% - limitations of the human mind to critically assess the quality of all the research output.
+
+% We put a set of requirements for user interaction with Lakat. First, In a first version of Lakat we are planning to use 3id for authentication 
+
+
+\subsection{Contributors}
+\label{ssc:contributors}
 Every branch has \textit{contributors}, or rather contributors have branches. A contributor is an account that can prove to have contributed to a given branch. There are four types of contributors for any given branch: \textit{content contributors}, \textit{review contributors}, \textit{token contributors} and \textit{storage contributors}. A content contributor can prove to have submitted to the branch. A review contributor is someone who can prove to have pushed reviews to the branch (see Subsection \ref{ssc:por} for information on proof of review). A token contributor is someone who can prove to have deposited funds into the branch. A storage contributor is someone who can prove to store data of that branch. Being a contributor means that you have to prove your contribution for the submits from the root submit of the branch till the current stable head.
 How does the set of contributors change during a merge? What is the relation betwen the contributors of two branches before the marege and after? When the belt branch merged into the core following a pull request, then the new set of contributors is simply the union of the two branches (see Subsection \ref{ssc:branch} for the terms core and belt). That holds for all contributor types. When there is no pull request preceding the merge the contributors of this branch are unaltered.
 The main idea behind the concept of contributors is derived from the mutability, governance and autonomy of branches. Branches can only be modified by their contributors. This attempts to preempt attacks on branches.
@@ -20,5 +55,10 @@ The main idea behind the concept of contributors is derived from the mutability,
 % You can only make changes to the branch that you are contributing to. 
 
 
+\subsection{Contribution}
+\label{ssc:contribution}
 
 A contribution is any type of interaction with the branch. There are four types of contributions: \textit{submit}, \textit{review}, \textit{token} and \textit{storage}. A submit is a contribution that adds data to the branch. A review submit is a contribution that adds a review to a branch. A token submit is a contribution that adds a proof of a token creation, token mint or token transfer to the branch. A storage contribution is a proof about the storage of data pointed contained in the branch, i.e. pointed at by submits of the branch. A contribution is always associated with a branch and a contributor. In the first minimal viable version of Lakat, we are planning to use STARKs \cite{} as proof system. This is due to the fact that STARKs do not require a trusted setup. We use Cairo programmes to generate proofs and point to their verification. The proof of contribution is a hash of the zero-knowledge proof of the contribution and its verification.
+
+
+When a branch request is send into the network it is being routed to the branch that it is requesting. The backlog of requests in being shared and continuously broadcasted and updated by storage and content contributors  If the request has a payload that ought to modify the branch state, the receiving node checks the proof of contribution. If the proof is valid the node adds the contribution to its history. If the proof is invalid the branch rejects the contribution. The branch then sends a message to the contributor that the contribution was rejected. The contributor can then try to resubmit the contribution with a new proof. The branch can also reject the contribution if it is not a valid contribution. For example if the contribution is a submit and the submit is not a valid submit. The branch can also reject the contribution if the contributor is not a contributor of the branch. For example if the contributor is not a content contributor and the contribution is a submit. The branch can also reject the contribution if the contributor is not a contributor of the branch. For example if the contributor is not a content contributor and the contribution is a submit. The branch can also reject the contribution if the contributor is not a contributor of the branch. For example if the contributor is not a content contributor and the contribution is a submit. The branch can also reject the contribution if the contributor is not a contributor of the branch. For example if the contributor is not a content contributor and the contribution is a submit. The branch can also reject the contribution if the contributor is not a contributor of the branch. For example if the contributor is not a content contributor and the contribution is a submit. The branch can also reject the contribution if the contributor is not a contributor of the branch. For example if the contributor is not a content contributor and the contribution is a submit. The branch can also reject the contribution if the contributor is not a contributor of the branch. For example if the contributor is not a content contributor and the contribution is a submit. 
