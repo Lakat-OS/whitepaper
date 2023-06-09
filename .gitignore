@@ -11,3 +11,7 @@
 *.bak
 src/*.pdf
 *synctex.gz
+TODO.md
+src/merged.tex
+
+auxiliary
