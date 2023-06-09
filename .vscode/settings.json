@@ -1,0 +1,8 @@
+{
+    // Controls how lines should wrap.
+	//  - off: Lines will never wrap.
+	//  - on: Lines will wrap at the viewport width.
+	//  - wordWrapColumn: Lines will wrap at `editor.wordWrapColumn`.
+	//  - bounded: Lines will wrap at the minimum of viewport and `editor.wordWrapColumn`.
+	"editor.wordWrap": "on",
+}
