@@ -20,10 +20,11 @@
     pdfpagemode=FullScreen,
     }
     
-\usepackage[left=2.15cm, right=2.15cm, bottom=1.55cm, top=0.75cm]{geometry}
+\usepackage[left=2.15cm, right=2.15cm, bottom=2.15cm, top=2.15cm]{geometry}
 
 \newcommand{\remark}[1]{{\color{purple} (#1)}}
 \newcommand{\comment}[1]{{\color{black!50!green} #1}}
+\newenvironment {acknowledgements} { \renewcommand {\abstractname} {Acknowledgements} \begin {abstract} } { \end {abstract} }
 
 \title{\sc{Lakat}\break \sc{An open pluralistic base layer for 
 % continuous integration 
@@ -37,10 +38,13 @@ academic publishing}}
 
 \maketitle
 
+\input{src/abstract.tex}
+
+% \newpage
+
 \tableofcontents
 
-\newpage
-\input{src/abstract.tex}
+% \newpage
 
 \input{src/introduction.tex}
 
@@ -50,14 +54,15 @@ academic publishing}}
 
 \input{src/protocol.tex}
 
-\input{src/onramping.tex}
-
 \input{src/Integrationadaptability.tex}
 
 % \input{src/attackvectors.tex}
 
 \input{src/conclusion.tex}
 
+\input{src/acknowledgements.tex}
+
+% \newpage
 \bibliographystyle{IEEEtran}
 \bibliography{src/lib/aDistributedPublicationSystem}
 \end{document}
