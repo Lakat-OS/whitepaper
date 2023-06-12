@@ -1,5 +1,5 @@
-
 \section{Protocol}
+\ref{sc:protocol}
 
 In this section we describe the Lakat protocol. We start with a high-level overview of the protocol and then go into the details of the individual components. Lakat is a shared key-value database of branches and data buckets together with a peer-to-peer protocol that governs the modification of this database. The modifications happen through submits to branches. The protocol needs to cover five functions: 1) Define a mechanism to construct new contributions \footnote{This is called block proposal for blockchains. Examples include proof-of-work or proof-of-stake}. 2) Broadcast information about requests and new branch modifications through the network. 3) Check the validity of the branch modification. 4) Define a strategy to finalize the state of a branch. 5) Incentivize contributors to propose modifications. 
 
