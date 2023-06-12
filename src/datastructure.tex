@@ -4,7 +4,6 @@
 \subsection{Bucket}
 \label{ssc:bucket}
 The most elementary data object is the \textit{bucket}. Each and every submitted item is submitted in a bucket: datasets, paragraphs, images and formulae are contained in buckets. These are examples of \textit{atomic buckets}, expressing the fact that they are the building blocks of the system. 
-% We decisively opted against objects that represent traditional folders, where every file belongs to one and only one folder\footnote{In git the folder object is called a \textit{tree node} and it is not possible for a file (called a \textit{blob} in git-speak) to belong to multiple trees. In the unix filesystem it is only possible through the hack of soft and hard links.}.
 Instead of a folder structure we solve the containment relation through designated buckets that we call \textit{molecular buckets} (like \textit{tree} nodes in git). The data part of those buckets contains merely an arrangement of atomic buckets. One may think of them as the analogue of an article, a book or some other curated content. 
 
 
@@ -82,7 +81,6 @@ The data at each node is serialized and hashed. The specifics of this encoding a
 \subsection{Storage}
 \label{ssc:storage}
 
-% i
 The data is stored in key-value databases and is content addressed in the sense that the key equals the multihash of the data. We would like to use the ipld standard for linked data. Inside the multihash there is information about the storage protocols where the data is stored and can be retrieved. A piece of data can be stored with multiple protocols. A contributor may also choose to store the information on the own machine of course at the risk of having reduced uptime and not being discoverable. If one would use ipfs for storage then a certain flag in the multihash would be raised. If also another protocol or system would be used then this would again be seen through the flag in the multihash. The more branches point to a piece of data and the more subsequent submits rely on it the more important the persistence of that data becomes.   
 The idea is that the availability, the longevity and the redundancy of data will scale with its importance in a self-organized fashion. A branch with many contributors will make sure to have the storage well secured and also well distributed. A newly created branch on the other hand needs to broadcast its creation (see Subsection \ref{ssc:branchrequests} for branch creation broadcasting) to allow for distributed storage  and attract contributors to ensure decentralized persistence of its data. 
 This has two advantages. 1) Data that is pointed at by many branches is highly available and more redundant. 2) One cannot attack the system by creating lots and lots of branches. To proof that a certain data bucket has been stored, i.e. pinned, that proof is attached to the mutable information of the bucket in the \textit{storageProofs} entry. There are a few more constraints about storage and pinning. It should be encouraged that every data bucket belongs to at least one molecular bucket so that there are no buckets without a context. Thus when a new data bucket is submitted the submission won't be accepted unless it is present in at least one context bucket.
@@ -95,10 +93,10 @@ When a new branch is created the data is initially just stored by the branch cre
 Every branch has its own staging area, where any type of branch interactions are waiting to be included. This is called the \textit{Branch--Requests} (or BR in short). It is similar to the mempool in ethereum. Everyone who is participating in the branch (See Protocol \ref{ssc:protocol}) and who runs a light client may receive branch interactions from users and broadcast them to the network. Here we refer to a \textit{client} as a piece of software that is yet to be written, which interacts with the network. A \textit{light client} is a client that is not capable of doing branch operations, but is capable of receiving and broadcasting branch--requests. Inclusion of requests into the branch, however, requires more (see Protocol \ref{ssc:protocol}). There are eight channels in the branch--requests (see Figure \ref{fig:mempool}): \textit{submit requests}, \textit{pull requests}, \textit{review commits}, \textit{review submit requests}, \textit{social transactions}, \textit{token transactions}, \textit{storage updates} and \textit{branch creation broadcast}. The requests inside the BR are not permanently stored. Requests are kept for as long as any of the branch contributors keeps track of them. That is where the similarity to the mempool stems from.
 
 Every channel in the Branch Requests has a certain capacity. In particular this aims to prevent that one channel clutters the entire pool of requests, which might happen if the capacity was channel-independent. All requests or broadcasts are serialized. 
-Submit requests contain a serialization of the data buckets that are requested to be added to the branch. Pull requests are simply pings from other branches that seek reviewers. Only by means of a pull request are contributors from the target branch allowed to make modifications to the requesting branch (see Proof of Revie \ref{ssc:consensus}).
+Submit requests contain a serialization of the data buckets that are requested to be added to the branch. Pull requests are simply pings from other branches that seek reviewers. Only by means of a pull request are contributors from the target branch allowed to make modifications to the requesting branch (see Proof of Review \ref{ssc:consensus}).
 
 
-\remark{One can submit interaction data to any branch that holds it. Once a branch processes it, }
+% \remark{One can submit interaction data to any branch that holds it. Once a branch processes it, }
 
 
 
