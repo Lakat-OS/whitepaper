@@ -12,6 +12,6 @@
 src/*.pdf
 *synctex.gz
 TODO.md
-# src/merged.tex
+src/merged.tex
 
 auxiliary
