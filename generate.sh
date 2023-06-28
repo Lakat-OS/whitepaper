@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 # Generate the pdflatex
 pdflatex --output-directory=src src/main.tex
 bibtex src/main
