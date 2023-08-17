@@ -10,3 +10,8 @@ Compilation into a pdf is achieved via:
 $ ./generate.sh
 ``` 
 from the root directory. This requires `pdflatex`. Follow [for example this link](https://gist.github.com/rain1024/98dd5e2c6c8c28f9ea9d) to install it.
+
+## Contributors
+
+Adrian Z.
+Leo H.
